@@ -51,7 +51,8 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
 
     async getdata() {
         let ip = await AsyncStorage.getItem('ip');
-        fetch('http://' + ip + ':3006/fyp1midevaluation_view')
+        let session_email = await AsyncStorage.getItem('email');
+        fetch('http://' + ip + ':3006/fyp1midevaluation_view?Email=' + session_email + '')
             .then(res => res.json())
             .then(users => {
 
@@ -322,18 +323,7 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                             </Text>
                             <Block style={{ flexDirection: 'column' }}>
 
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Name: {leadername}
-                                </Text>
+                             
 
                                 <Text
                                     p
@@ -363,18 +353,7 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                                 Member 2 :
                             </Text>
                             <Block style={{ flexDirection: 'column' }}>
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Name: {member2name}
-                                </Text>
+                               
 
                                 <Text
                                     p
@@ -404,18 +383,7 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                                 Member 3 :
                             </Text>
                             <Block style={{ flexDirection: 'column' }}>
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Name: {member3name}
-                                </Text>
+                                
 
                                 <Text
                                     p
@@ -500,7 +468,8 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                         h5
                         style={{
                             fontFamily: 'montserrat-regular',
-                            marginBottom: theme.SIZES.BASE / 2
+                            marginBottom: theme.SIZES.BASE / 2,
+                            fontWeight:'500'
                         }}
                         color={nowTheme.COLORS.HEADER}
                     >

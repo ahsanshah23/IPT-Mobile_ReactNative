@@ -40,6 +40,7 @@ import FYP2_MidEvaluation_Add from '../screens/Teacher/FYP2/FYP2_MidEvaluation_A
 import FYP2_FinalEvaluation_External from '../screens/External/FYP2_FinalEvaluation_External';
 import External_Home from '../screens/External/External_Home';
 import External_Form_view from '../screens/External/External_Form_view';
+import External_Form_Evaluation_View from '../screens/External/External_Form_Evaluation_View';
 
 
 // drawer
@@ -177,13 +178,13 @@ const StudentFYP2Stack = createStackNavigator(
     FYP2_Final_Evaluation_External_View: {
       screen: FYP2_Final_Evaluation_External_View,
       navigationOptions: ({ navigation }) => ({
-        header: <Header search options title="FYP 2 Final Evaluation Internal Jury View" navigation={navigation} />
+        header: <Header search options title="FYP 2 Final Evaluation External Jury View" navigation={navigation} />
       })
     },
     FYP2_Final_Evaluation_Internal_View: {
       screen: FYP2_Final_Evaluation_Internal_View,
       navigationOptions: ({ navigation }) => ({
-        header: <Header search options title="FYP 2 Final Evaluation External Jury View" navigation={navigation} />
+        header: <Header search options title="FYP 2 Final Evaluation Internal Jury View" navigation={navigation} />
       })
     },
   },
@@ -321,7 +322,13 @@ const ExternalStack = createStackNavigator(
     External_Form_view: {
       screen: External_Form_view,
       navigationOptions: ({ navigation }) => ({
-        header: <Header search options title="FYP 2 Final Evaluation External" navigation={navigation} />
+        header: <Header search options title="Submitted Form List" navigation={navigation} />
+      })
+    },
+    External_Form_Evaluation_View: {
+      screen: External_Form_Evaluation_View,
+      navigationOptions: ({ navigation }) => ({
+        header: <Header search options title="Evaluated Form" navigation={navigation} />
       })
     },
     

@@ -43,7 +43,8 @@ class FYP2_Final_Evaluation_External_View extends React.Component {
   async getdata()
   {
     let ip = await AsyncStorage.getItem('ip');
-    fetch('http://'+ip+':3006/fyp2finalevaluationexternal_view')
+    let session_email = await AsyncStorage.getItem('email');
+    fetch('http://'+ip+':3006/fyp2finalevaluationexternal_view?Email='+session_email+'')
     .then(res => res.json())
     .then(users => {
       this.setState({
@@ -156,7 +157,7 @@ class FYP2_Final_Evaluation_External_View extends React.Component {
 
   
   renderTeam = () => {
-    const { member1Name, member2Name, member3Name } = this.state;
+    const { member1Email, member2Email, member3Email } = this.state;
     return (
       <Block flex style={styles.group}>
         <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
@@ -196,7 +197,7 @@ class FYP2_Final_Evaluation_External_View extends React.Component {
                   }}
                   color={nowTheme.COLORS.HEADER}
                 >
-                  Name : {member1Name}
+                  Email : {member1Email}
                 </Text>
               </Block>
               <Text
@@ -222,7 +223,7 @@ class FYP2_Final_Evaluation_External_View extends React.Component {
                   }}
                   color={nowTheme.COLORS.HEADER}
                 >
-                  Name : {member2Name}
+                  Email : {member2Email}
                 </Text>
               </Block>
               <Text
@@ -248,7 +249,7 @@ class FYP2_Final_Evaluation_External_View extends React.Component {
                   }}
                   color={nowTheme.COLORS.HEADER}
                 >
-                  Name : {member3Name}
+                  Email : {member3Email}
                 </Text>
               </Block>
             </Block>
@@ -641,7 +642,6 @@ class FYP2_Final_Evaluation_External_View extends React.Component {
             {this.renderTitle()}
             {this.renderTeam()}
             {this.renderadvisors()}
-            {this.renderrules()}
             {this.renderMarks()}
             {this.renderGrading()}
             {this.renderjury()}

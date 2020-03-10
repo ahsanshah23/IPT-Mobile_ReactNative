@@ -1,11 +1,13 @@
-import React from "react";
-import { StyleSheet, Dimensions, ScrollView, CheckBox, TextInput } from "react-native";
+import React, { Component } from 'react';
+import { StyleSheet, Dimensions, ScrollView, Picker } from "react-native";
 import { Block, theme, Text } from "galio-framework";
 import RadioGroup, { Radio } from "react-native-radio-input";
 import { nowTheme } from '../../../constants';
 import { Card, Button, Icon, Input } from "../../../components";
 import { AsyncStorage } from 'react-native';
 var FloatingLabel = require('react-native-floating-labels');
+import ModalDropdown from 'react-native-modal-dropdown';
+// import { Dropdown } from 'react-native-material-dropdown';
 // import articles from "../../../constants/articles";
 const { width } = Dimensions.get("screen");
 
@@ -27,34 +29,61 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
       member3email: "",
       supervisor: "",
       cosupervisor: "",
-      status:"",
-      markcriteria1:"",
-      markcriteria2:"",
-      markcriteria3:"",
-      markcriteria4:"",
-      markcriteria5:"",
-      markcriteria6:"",
-      deliverable1:"",
-      deliverable2:"",
-      deliverable3:"",
-      deliverable4:"",
-      deliverable5:"",
-      changes:"",
-      comments:"",
-      evaluator:"",
-      coevaluator:""
+      status: "",
+      markcriteria1: "",
+      markcriteria2: "",
+      markcriteria3: "",
+      markcriteria4: "",
+      markcriteria5: "",
+      markcriteria6: "",
+      deliverable1: "",
+      deliverable2: "",
+      deliverable3: "",
+      deliverable4: "",
+      deliverable5: "",
+      changes: "",
+      comments: "",
+      evaluator: "",
+      coevaluator: "",
+      fyps: [],
     };
   }
 
+  componentDidMount() {
+    this.getData();
+  }
+
+  async getData() {
+
+    const markers = [];
+    let ip = await AsyncStorage.getItem('ip');
+
+    await fetch('http://' + ip + ':3006/fypnames ')
+      .then(res => res.json())
+
+      .then(res => {
+        res.map((element) => {
+          const marketObj = {};
+          marketObj.id = element.id;
+          marketObj.title = element.title;
+          marketObj.leaderemail = element.leaderemail;
+
+          markers.push(marketObj);
+        });
+
+        this.setState({ fyps: markers });
+      });
+  }
+
   async Submit() {
-    const {title, leadername, leaderemail, member2name, member2email, member3email, member3name, supervisor, cosupervisor, status, markcriteria1, markcriteria2, markcriteria3, markcriteria4, markcriteria5, markcriteria6, deliverable1, deliverable2, deliverable3, deliverable4, deliverable5, changes, comments, evaluator, coevaluator } = this.state;
+    const { title, leadername, leaderemail, member2name, member2email, member3email, member3name, supervisor, cosupervisor, status, markcriteria1, markcriteria2, markcriteria3, markcriteria4, markcriteria5, markcriteria6, deliverable1, deliverable2, deliverable3, deliverable4, deliverable5, changes, comments, evaluator, coevaluator } = this.state;
     let ip = await AsyncStorage.getItem('ip');
     let session_email = await AsyncStorage.getItem('email');
-    await fetch('http://' + ip + ':3006/fyp1midevaluation_add?title=' + title + ' &leadername=' + leadername + ' &leaderemail=' + leaderemail + ' &member2name=' + member2name + 
-    ' &member2email=' + member2email + ' &member3email=' + member3email + ' &member3name=' + member3name + ' &supervisor=' + supervisor + ' &cosupervisor=' + cosupervisor + 
-    '&status=' + status + '&markcriteria1=' + markcriteria1 + ' &markcriteria2=' + markcriteria2 + ' &markcriteria3=' + markcriteria3 + ' &markcriteria4=' + markcriteria4 + ' &markcriteria5=' + markcriteria5 
-    + '&markcriteria6=' + markcriteria6 + ' &deliverable1=' + deliverable1 + ' &deliverable2=' + deliverable2 + ' &deliverable3=' + deliverable3 + ' &deliverable4=' + deliverable4 
-    +  '&deliverable5=' + deliverable5 + ' &changes=' + changes + ' &comments=' + comments + ' &evaluator=' + evaluator + ' &coevaluator=' + coevaluator + ' &submitted_by=' + session_email + ' ')
+    await fetch('http://' + ip + ':3006/fyp1midevaluation_add?title=' + title + ' &leadername=' + leadername + ' &leaderemail=' + leaderemail + ' &member2name=' + member2name +
+      ' &member2email=' + member2email + ' &member3email=' + member3email + ' &member3name=' + member3name + ' &supervisor=' + supervisor + ' &cosupervisor=' + cosupervisor +
+      '&status=' + status + '&markcriteria1=' + markcriteria1 + ' &markcriteria2=' + markcriteria2 + ' &markcriteria3=' + markcriteria3 + ' &markcriteria4=' + markcriteria4 + ' &markcriteria5=' + markcriteria5
+      + '&markcriteria6=' + markcriteria6 + ' &deliverable1=' + deliverable1 + ' &deliverable2=' + deliverable2 + ' &deliverable3=' + deliverable3 + ' &deliverable4=' + deliverable4
+      + '&deliverable5=' + deliverable5 + ' &changes=' + changes + ' &comments=' + comments + ' &evaluator=' + evaluator + ' &coevaluator=' + coevaluator + ' &submitted_by=' + session_email + ' ')
       .then(users => {
 
         alert("inserted");
@@ -106,12 +135,35 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
     this.setState({ status: value });
   }
 
+  async setData(title) {
+    
+    let ip = await AsyncStorage.getItem('ip');
+
+    await fetch('http://' + ip + ':3006/formfill_by_title?title='+title+' ')
+    .then(res => res.json())
+    .then(users => {
+
+        this.setState({
+            title: users[0].title, 
+            leaderemail: users[0].leaderemail,
+            member2email: users[0].member2email,
+            member3email: users[0].member3email,
+            supervisor: users[0].supervisor,
+            cosupervisor: users[0].cosupervisor,
+
+        })
+
+    })
+  }
+
   renderTitle = () => {
 
 
+    const { fyps, title } = this.state;
     return (
       <Block flex style={styles.group}>
         <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+
           <Text
             h5
             style={{
@@ -123,16 +175,20 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
             Project Title
           </Text>
           <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-            <Input
-              primary={this.state.primaryFocus}
-              right
-              placeholder="Project Title"
-              onFocus={() => this.setState({ primaryFocus: true })}
-              onBlur={() => this.setState({ primaryFocus: false })}
-              iconContent={<Block />}
-              shadowless
-              onChangeText={(title) => this.setState({ title })}
-            />
+            <Picker
+              selectedValue={this.state.title}
+              style={{ height: 50, width: 100 }}
+              onValueChange={(value) =>
+                 this.setData(value)
+              }
+              >
+              {this.state.fyps.map((item, key) => (
+                <Picker.Item key={key} label={item.title} value={item.title} />
+              )
+              )}
+
+
+            </Picker>
           </Block>
 
         </Block>
@@ -344,24 +400,24 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Member 1 : (Leader)
+                Member 1 : (Leader) 
               </Text>
               <Block style={{ flexDirection: 'column' }}>
 
-                <FloatingLabel
+                {/* <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
                   onChangeText={(leadername) => this.setState({ leadername })}
                   placeholder="Name"
                 >
-                </FloatingLabel>
+                </FloatingLabel> */}
 
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  onChangeText={(leaderemail) => this.setState({ leaderemail })}
-                  placeholder="Email"
+                  value={this.state.leaderemail}
                 >
+                  
                 </FloatingLabel>
 
               </Block>
@@ -377,21 +433,20 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                 Member 2 :
               </Text>
               <Block style={{ flexDirection: 'column' }}>
-                <FloatingLabel
+                {/* <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
                   onChangeText={(member2name) => this.setState({ member2name })}
                   placeholder="Name"
                 >
-                </FloatingLabel>
+                </FloatingLabel> */}
 
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  onChangeText={(member2email) => this.setState({ member2email })}
-                  placeholder="Email"
-
+                  value={this.state.member2email}
                 >
+                  
                 </FloatingLabel>
 
               </Block>
@@ -407,20 +462,20 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                 Member 3 :
               </Text>
               <Block style={{ flexDirection: 'column' }}>
-                <FloatingLabel
+                {/* <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
                   onChangeText={(member3name) => this.setState({ member3name })}
                   placeholder="Name"
                 >
-                </FloatingLabel>
+                </FloatingLabel> */}
 
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  onChangeText={(member3email) => this.setState({ member3email })}
-                  placeholder="Email"
+                  value={this.state.member3email}
                 >
+                  
                 </FloatingLabel>
               </Block>
             </Block>
@@ -461,9 +516,9 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  onChangeText={(supervisor) => this.setState({ supervisor })}
-                  placeholder="Email"
+                  value={this.state.supervisor}
                 >
+                  
                 </FloatingLabel>
               </Block>
               <Text
@@ -481,9 +536,9 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  onChangeText={(cosupervisor) => this.setState({ cosupervisor })}
-                  placeholder="Email Supervisor"
+                  value={this.state.cosupervisor}
                 >
+                  
                 </FloatingLabel>
               </Block>
             </Block>
@@ -637,7 +692,7 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
           </Text>
           <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
             <Block style={{ flexDirection: 'column' }}>
-             
+
               <Block style={{ flexDirection: 'column' }}>
                 <FloatingLabel
                   inputStyle={styles.input1}
@@ -648,7 +703,7 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                 </FloatingLabel>
               </Block>
 
-         
+
 
             </Block>
           </Block>
@@ -673,7 +728,7 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
           </Text>
           <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
             <Block style={{ flexDirection: 'column' }}>
-             
+
               <Block style={{ flexDirection: 'column' }}>
                 <FloatingLabel
                   inputStyle={styles.input1}
@@ -684,7 +739,7 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                 </FloatingLabel>
               </Block>
 
-         
+
 
             </Block>
           </Block>
@@ -751,7 +806,7 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                 </FloatingLabel>
               </Block>
 
-          
+
             </Block>
           </Block>
         </Block>
@@ -822,7 +877,8 @@ const styles = StyleSheet.create({
 
   formInput: {
     borderBottomWidth: 1.5,
-    fontSize: 16
+    fontSize: 16,
+    color:'black'
   },
   input1: {
     borderWidth: 0,

@@ -16,9 +16,10 @@ class External_Form_view extends React.Component {
         super(props);
         this.state = {
 
-            id: "",
+            supervisor_email: "",
             title: "",
-            leader_email: ""
+            leader_email: "",
+            proposals: [],
 
         };
     }
@@ -29,94 +30,61 @@ class External_Form_view extends React.Component {
     }
 
     async getData() {
+
+        const markers = [];
         let ip = await AsyncStorage.getItem('ip');
         let session_email = await AsyncStorage.getItem('email');
-        await fetch('http://'+ip+':3006/fyp1proposal_list?Email='+session_email+' ')
-            .then(res => res.json())
-            .then(users => {
 
-                console.warn(users[0].id)
-                console.warn(users[0].project_title)
-                console.warn(users[0].leader_email)
-                this.setState({
-                    id: users[0].id,
-                    title: users[0].project_title,
-                    leader_email: users[0].leader_email
-                })
-                // this.props.navigation.navigate('Student_Home')
-            })
+        await fetch('http://' + ip + ':3006/jurysubmitted_list?Email=' + session_email + ' ')
+            .then(res => res.json())
+
+            .then(res => {
+                res.map((element) => {
+                    const marketObj = {};
+                    marketObj.supervisor_email = element.supervisor_email;
+                    marketObj.title = element.Project_Title;
+                    marketObj.leader_email = element.leader_email;
+
+                    markers.push(marketObj);
+                });
+
+                this.setState({ proposals: markers });
+            });
     }
 
 
     render() {
-        const { id, title, leader_email } = this.state;
         return (
             <Block>
                 <ScrollView>
 
+                    {this.state.proposals.map((item, key) => (
+                        
+                        <TouchableOpacity  style={[styles.card, { backgroundColor: '#008080' }]} onPress={() => {
+                            AsyncStorage.setItem('leader', item.leader_email);
+                            this.props.navigation.navigate("External_Form_Evaluation_View");
+                            
+                        }}>
+                            <View style={styles.cardHeader}>
+                                <Text style={styles.title}>Title: {item.title}</Text>
+                                <Image style={styles.icon} source={{ uri: "https://img.icons8.com/ios/40/000000/settings.png" }} />
+                            </View>
 
-                    <TouchableOpacity style={[styles.card, { backgroundColor: '#FF4500' }]} onPress={() => { this.props.navigation.navigate("FYP1_ProposalForm_View"); }}>
-                        <View style={styles.cardHeader}>
-                            <Text style={styles.title}>{title}</Text>
-                            <Image style={styles.icon} source={{ uri: "https://img.icons8.com/ios/40/000000/settings.png" }} />
-                        </View>
+                            <View style={styles.cardFooter}>
+                                <Text key={key} style={styles.subTitle}>Supervisor Email ID: {item.supervisor_email}</Text>
 
-                        <View style={styles.cardFooter}>
-                            <Text style={styles.subTitle}>  Proposal ID: {id} </Text>
-                        </View>
-                        <View style={styles.cardFooter}>
-                            <Text style={styles.subTitle}>  Leader Email: {leader_email} </Text>
-                        </View>
+                            </View>
+                            <View style={styles.cardFooter}>
 
-                    </TouchableOpacity>
+                                <Text key={key} style={styles.subTitle}>Leader email: {item.leader_email}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    )
+                    )}
 
-                    {/* <TouchableOpacity style={[styles.card, { backgroundColor: '#87CEEB' }]} onPress={() => { this.props.navigation.navigate("FYP1_MidEvaluation"); }}>
-                        <View style={styles.cardHeader}>
-                            <Text style={styles.title}> FYP 1  </Text>
-                            <Image style={styles.icon} source={{ uri: "https://img.icons8.com/ios/40/000000/settings.png" }} />
-                        </View>
-
-                        <View style={styles.cardFooter}>
-                            <Text style={styles.subTitle}> Mid Evaluation Form</Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={[styles.card, { backgroundColor: '#008080' }]} onPress={() => { this.props.navigation.navigate("FYP1_FinalEvaluation"); }}>
-                        <View style={styles.cardHeader}>
-                            <Text style={styles.title}> FYP 1  </Text>
-                            <Image style={styles.icon} source={{ uri: "https://img.icons8.com/ios/40/000000/settings.png" }} />
-                        </View>
-
-                        <View style={styles.cardFooter}>
-                            <Text style={styles.subTitle}> Final Evaluation Form</Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={[styles.card, { backgroundColor: '#FF69B4' }]} onPress={() => { this.props.navigation.navigate("FYP2_MidEvaluation"); }}>
-                        <View style={styles.cardHeader}>
-                            <Text style={styles.title}> FYP 2  </Text>
-                            <Image style={styles.icon} source={{ uri: "https://img.icons8.com/ios/40/000000/settings.png" }} />
-                        </View>
-
-                        <View style={styles.cardFooter}>
-                            <Text style={styles.subTitle}> Mid Evaluation Form</Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={[styles.card, { backgroundColor: '#00BFFF' }]} onPress={() => { this.props.navigation.navigate("FYP2_FinalEvaluation"); }}>
-                        <View style={styles.cardHeader}>
-                            <Text style={styles.title}> FYP 2  </Text>
-                            <Image style={styles.icon} source={{ uri: "https://img.icons8.com/ios/40/000000/settings.png" }} />
-                        </View>
-
-                        <View style={styles.cardFooter}>
-                            <Text style={styles.subTitle}> Final Evaluation Form</Text>
-                        </View>
-                    </TouchableOpacity> */}
 
                 </ScrollView>
             </Block>
-
         );
     }
 }
@@ -128,7 +96,6 @@ const styles = StyleSheet.create({
         flexBasis: '48%',
         marginTop: 10
     },
-
     container: {
         flex: 1,
         justifyContent: 'center',
@@ -157,7 +124,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: 'montserrat-regular',
-        fontSize: 26,
+        fontSize: 20,
         flex: 1,
         color: "#FFFFFF",
         fontWeight: '500'

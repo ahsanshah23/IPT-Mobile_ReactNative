@@ -13,39 +13,11 @@ class FYP2_Home_Student extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this.getstatus();
-    
-  }
-
-  async getstatus() {
-    let name = await AsyncStorage.getItem('name');
-    alert(name);
-    this.setState({name:name});
-    let session_email = await AsyncStorage.getItem('email');
-    await fetch('http://192.168.0.105:3006/fyp1proposal_status?Email="'+session_email+'" ')
-      .then(res => res.json())
-      .then(users => {
-
-        if (users == 0) {
-          this.setState({
-            ButtonAdd: false,
-            ButtonView: true
-          })
-        }
-        else {
-          this.setState({
-            ButtonAdd: true,
-            ButtonView: false
-          })
-        }
-
-      })
-  }
+  
 
 
   render() {
-    const { ButtonAdd, ButtonView, name } = this.state;
+
     return (
       <Block>
         <ScrollView>

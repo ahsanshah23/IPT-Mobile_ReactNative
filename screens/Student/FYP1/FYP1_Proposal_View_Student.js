@@ -34,13 +34,13 @@ class FYP1_Proposal_View_Student extends React.Component {
 
     componentDidMount() {
         this.getdata();
-        
+
     }
 
-    async getdata()
-    {
+    async getdata() {
         let ip = await AsyncStorage.getItem('ip');
-        fetch('http://'+ip+':3006/fyp1proposal_view')
+        let session_email = await AsyncStorage.getItem('email');
+        fetch('http://' + ip + ':3006/fyp1proposal_view?Email=' + session_email + '')
             .then(res => res.json())
             .then(users => {
                 this.setState({
@@ -169,21 +169,8 @@ class FYP1_Proposal_View_Student extends React.Component {
                                 }}
                                 color={nowTheme.COLORS.HEADER}
                             >
-                                1 : {areaofinterest}
+                                {areaofinterest}
                             </Text>
-
-                            <Text
-                                p
-                                style={{
-                                    fontFamily: 'montserrat-regular',
-                                    marginBottom: theme.SIZES.BASE / 2,
-                                    marginTop: '2.5%'
-                                }}
-                                color={nowTheme.COLORS.HEADER}
-                            >
-                                2 : {areaofinterest}
-                            </Text>
-
 
                         </Block>
                     </Block>
@@ -262,18 +249,6 @@ class FYP1_Proposal_View_Student extends React.Component {
                             </Text>
                             <Block style={{ flexDirection: 'column' }}>
 
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 12
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Name: {leadername}
-                                </Text>
 
                                 <Text
                                     p
@@ -281,12 +256,12 @@ class FYP1_Proposal_View_Student extends React.Component {
                                         fontFamily: 'montserrat-regular',
                                         marginBottom: theme.SIZES.BASE / 2,
                                         marginTop: '2.5%',
-                                        fontSize: 12,
+                                        fontSize: 16,
 
                                     }}
                                     color={nowTheme.COLORS.HEADER}
                                 >
-                                    Roll Number: {leaderemail}
+                                    Email: {leaderemail}
                                 </Text>
 
                             </Block>
@@ -303,18 +278,7 @@ class FYP1_Proposal_View_Student extends React.Component {
                                 Member 2 :
                             </Text>
                             <Block style={{ flexDirection: 'column' }}>
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 12
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Name: {member2name}
-                                </Text>
+
 
                                 <Text
                                     p
@@ -322,12 +286,12 @@ class FYP1_Proposal_View_Student extends React.Component {
                                         fontFamily: 'montserrat-regular',
                                         marginBottom: theme.SIZES.BASE / 2,
                                         marginTop: '2.5%',
-                                        fontSize: 12,
+                                        fontSize: 16,
 
                                     }}
                                     color={nowTheme.COLORS.HEADER}
                                 >
-                                    Roll Number: {member2email}
+                                    Email: {member2email}
                                 </Text>
 
                             </Block>
@@ -344,18 +308,7 @@ class FYP1_Proposal_View_Student extends React.Component {
                                 Member 3 :
                             </Text>
                             <Block style={{ flexDirection: 'column' }}>
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 12
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Name: {member3name}
-                                </Text>
+
 
                                 <Text
                                     p
@@ -363,12 +316,12 @@ class FYP1_Proposal_View_Student extends React.Component {
                                         fontFamily: 'montserrat-regular',
                                         marginBottom: theme.SIZES.BASE / 2,
                                         marginTop: '2.5%',
-                                        fontSize: 12,
+                                        fontSize: 16,
 
                                     }}
                                     color={nowTheme.COLORS.HEADER}
                                 >
-                                    Roll Number: {member3email}
+                                    Email: {member3email}
                                 </Text>
                             </Block>
                         </Block>
@@ -450,43 +403,43 @@ class FYP1_Proposal_View_Student extends React.Component {
     };
 
     renderComment = () => {
-        const{comment} = this.state;
+        const { comment } = this.state;
         return (
-          <Block flex style={styles.group}>
-            <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-              <Text
-                h5
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  fontWeight: '500'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Comment
+            <Block flex style={styles.group}>
+                <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+                    <Text
+                        h5
+                        style={{
+                            fontFamily: 'montserrat-regular',
+                            marginBottom: theme.SIZES.BASE / 2,
+                            fontWeight: '500'
+                        }}
+                        color={nowTheme.COLORS.HEADER}
+                    >
+                        Comment
               </Text>
-              <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Type here to add comments"
-                  multiline={true}
-                  autoCapitalize="sentences"
-                  underlineColorAndroid="transparent"
-                  selectionColor={'white'}
-                  maxLength={5000}
-                  returnKeyType="done"
-                  autoCorrect={false}
-                  blurOnSubmit={true}
-                  disabled
-                  value={comment}
-                  //onSubmitEditing={onDoneAddItem}
-                //   onChangeText={(comment) => this.setState({ comment })}
-                />
-              </Block>
+                    <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Type here to add comments"
+                            multiline={true}
+                            autoCapitalize="sentences"
+                            underlineColorAndroid="transparent"
+                            selectionColor={'white'}
+                            maxLength={5000}
+                            returnKeyType="done"
+                            autoCorrect={false}
+                            blurOnSubmit={true}
+                            disabled
+                            value={comment}
+                        //onSubmitEditing={onDoneAddItem}
+                        //   onChangeText={(comment) => this.setState({ comment })}
+                        />
+                    </Block>
+                </Block>
             </Block>
-          </Block>
         );
-      };
+    };
 
     renderstatus = () => {
         const { status } = this.state;
@@ -506,7 +459,7 @@ class FYP1_Proposal_View_Student extends React.Component {
                         Status : {status}
                     </Text>
 
-                  
+
                 </Block>
             </Block>
         );
@@ -534,7 +487,7 @@ class FYP1_Proposal_View_Student extends React.Component {
                         {this.renderComment()}
                     </Card>
 
-                    
+
                 </ScrollView>
             </Block>
         );

@@ -13,7 +13,7 @@ class FYP1_Proposal_List extends React.Component {
 
             id: "",
             title: "",
-            leader_email: "",
+            leader_email: "", 
             proposals: [],
             leader:""
 

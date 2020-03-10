@@ -19,7 +19,7 @@ export default class Onboarding extends React.Component {
   };
 
   componentDidMount(){
-    AsyncStorage.setItem('ip', '192.168.0.106');
+    AsyncStorage.setItem('ip', '192.168.0.102');
   }
 
   async onLogin() {

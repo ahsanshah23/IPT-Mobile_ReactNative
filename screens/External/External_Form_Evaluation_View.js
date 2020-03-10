@@ -4,13 +4,13 @@ import { Block, theme, Text } from "galio-framework";
 var FloatingLabel = require('react-native-floating-labels');
 import { Table, Rows } from 'react-native-table-component';
 
-import { nowTheme } from '../../../constants';
+import { nowTheme } from '../../constants';
 import { Card } from 'react-native-paper';
 
 import { AsyncStorage } from 'react-native';
 
 
-class FYP2_Final_Evaluation_Internal_View extends React.Component {
+class External_Form_Evaluation_View extends React.Component {
   constructor(props) {
     super(props);
     //Initial State
@@ -43,8 +43,8 @@ class FYP2_Final_Evaluation_Internal_View extends React.Component {
   async getdata()
   {
     let ip = await AsyncStorage.getItem('ip');
-    let session_email = await AsyncStorage.getItem('email');
-    fetch('http://'+ip+':3006/fyp2finalevaluation_view?Email='+session_email+'')
+    let leader_email = await AsyncStorage.getItem('leader');
+    fetch('http://'+ip+':3006/fyp2finalevaluationexternal_view?Email='+leader_email+'')
     .then(res => res.json())
     .then(users => {
       this.setState({
@@ -155,8 +155,9 @@ class FYP2_Final_Evaluation_Internal_View extends React.Component {
     );
   };
 
+  
   renderTeam = () => {
-    const { member1Email, member2Email, member3Email } = this.state;
+    const { member1Name, member2Name, member3Name } = this.state;
     return (
       <Block flex style={styles.group}>
         <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
@@ -196,7 +197,7 @@ class FYP2_Final_Evaluation_Internal_View extends React.Component {
                   }}
                   color={nowTheme.COLORS.HEADER}
                 >
-                  Email : {member1Email}
+                  Name : {member1Name}
                 </Text>
               </Block>
               <Text
@@ -222,7 +223,7 @@ class FYP2_Final_Evaluation_Internal_View extends React.Component {
                   }}
                   color={nowTheme.COLORS.HEADER}
                 >
-                  Email : {member2Email}
+                  Name : {member2Name}
                 </Text>
               </Block>
               <Text
@@ -248,7 +249,7 @@ class FYP2_Final_Evaluation_Internal_View extends React.Component {
                   }}
                   color={nowTheme.COLORS.HEADER}
                 >
-                  Email : {member3Email}
+                  Name : {member3Name}
                 </Text>
               </Block>
             </Block>
@@ -639,8 +640,8 @@ class FYP2_Final_Evaluation_Internal_View extends React.Component {
           <Card style={styles.card}>
             {this.renderHeading()}
             {this.renderTitle()}
-            {this.renderTeam()}
             {this.renderadvisors()}
+            {this.renderrules()}
             {this.renderMarks()}
             {this.renderGrading()}
             {this.renderjury()}
@@ -679,4 +680,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FYP2_Final_Evaluation_Internal_View;
+export default External_Form_Evaluation_View;

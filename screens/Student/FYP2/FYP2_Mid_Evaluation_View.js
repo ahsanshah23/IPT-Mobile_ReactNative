@@ -41,7 +41,8 @@ class FYP2_Mid_Evaluation_View extends React.Component {
   async getdata()
   {
     let ip = await AsyncStorage.getItem('ip');
-    fetch('http://'+ip+':3006/fyp2midevaluation_view')
+    let session_email = await AsyncStorage.getItem('email');
+    fetch('http://'+ip+':3006/fyp2midevaluation_view?Email='+session_email+'')
     .then(res => res.json())
     .then(users => {
       this.setState({
@@ -127,7 +128,7 @@ class FYP2_Mid_Evaluation_View extends React.Component {
             }}
             color={nowTheme.COLORS.HEADER}
           >
-            Project Title
+            Project Title : {title}
           </Text>
         </Block>
       </Block>
@@ -166,18 +167,7 @@ class FYP2_Mid_Evaluation_View extends React.Component {
                 Member 1 : (Leader)
               </Text>
               <Block style={{ flexDirection: 'column' }}>
-                <Text
-                  p
-                  style={{
-                      fontFamily: 'montserrat-regular',
-                      marginBottom: theme.SIZES.BASE / 2,
-                      marginTop: '2.5%',
-                      fontSize: 16
-                  }}
-                  color={nowTheme.COLORS.HEADER}
-                >
-                  Name : {member1Name}
-                </Text>
+              
                 <Text
                   p
                   style={{
@@ -204,18 +194,7 @@ class FYP2_Mid_Evaluation_View extends React.Component {
                 Member 2 :
               </Text>
               <Block style={{ flexDirection: 'column' }}>
-              <Text
-                  p
-                  style={{
-                      fontFamily: 'montserrat-regular',
-                      marginBottom: theme.SIZES.BASE / 2,
-                      marginTop: '2.5%',
-                      fontSize: 16
-                  }}
-                  color={nowTheme.COLORS.HEADER}
-                >
-                  Name : {member2Name}
-                </Text>
+             
                 <Text
                   p
                   style={{
@@ -242,18 +221,7 @@ class FYP2_Mid_Evaluation_View extends React.Component {
                 Member 3 :
               </Text>
               <Block style={{ flexDirection: 'column' }}>
-                <Text
-                  p
-                  style={{
-                      fontFamily: 'montserrat-regular',
-                      marginBottom: theme.SIZES.BASE / 2,
-                      marginTop: '2.5%',
-                      fontSize: 16
-                  }}
-                  color={nowTheme.COLORS.HEADER}
-                >
-                  Name : {member3Name}
-                </Text>
+                
                 <Text
                   p
                   style={{
@@ -306,18 +274,7 @@ class FYP2_Mid_Evaluation_View extends React.Component {
                 Supervisor :
               </Text>
               <Block style={{ flexDirection: 'column' }}>
-                <Text
-                  p
-                  style={{
-                      fontFamily: 'montserrat-regular',
-                      marginBottom: theme.SIZES.BASE / 2,
-                      marginTop: '2.5%',
-                      fontSize: 16
-                  }}
-                  color={nowTheme.COLORS.HEADER}
-                >
-                  Name : {supervisorName}
-                </Text>
+              
                 <Text
                   p
                   style={{
@@ -344,18 +301,7 @@ class FYP2_Mid_Evaluation_View extends React.Component {
                 Co-supervisor(s) (if any) :
               </Text>
               <Block style={{ flexDirection: 'column' }}>
-                <Text
-                  p
-                  style={{
-                      fontFamily: 'montserrat-regular',
-                      marginBottom: theme.SIZES.BASE / 2,
-                      marginTop: '2.5%',
-                      fontSize: 16
-                  }}
-                  color={nowTheme.COLORS.HEADER}
-                >
-                  Name : {coSupervisorName}
-                </Text>
+               
                 <Text
                   p
                   style={{
@@ -463,7 +409,7 @@ class FYP2_Mid_Evaluation_View extends React.Component {
                   }}
                   color={nowTheme.COLORS.HEADER}
                 >
-                  Email : {evaluatorEmail}
+                  Name : {evaluatorEmail}
                 </Text>
               </Block>
               <Text
@@ -489,7 +435,7 @@ class FYP2_Mid_Evaluation_View extends React.Component {
                   }}
                   color={nowTheme.COLORS.HEADER}
                 >
-                  Email : {coevaluatorEmail}
+                  Name : {coevaluatorEmail}
                 </Text>
               </Block>
             </Block>

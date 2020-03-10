@@ -1,10 +1,10 @@
 import React from "react";
-import { StyleSheet, Dimensions, ScrollView, CheckBox, TextInput, AsyncStorage } from "react-native";
+import { StyleSheet, Dimensions, ScrollView, CheckBox, TextInput, AsyncStorage , Picker} from "react-native";
 import { Block, theme, Text } from "galio-framework";
 var FloatingLabel = require('react-native-floating-labels');
 import { nowTheme } from '../../../constants';
-import { Input } from "../../../components";
 import { Button } from "../../../components";
+
 class FYP1_FinalEvaluation extends React.Component {
   state = {
     ischecked: false,
@@ -38,9 +38,36 @@ class FYP1_FinalEvaluation extends React.Component {
       member3email: "",
       member3marks:"",
       evaluator:"",
-      coevaluator:""
+      coevaluator:"",
+      fyps:[]
 
     };
+  }
+
+  componentDidMount() {
+    this.getData();
+  }
+
+  async getData() {
+
+    const markers = [];
+    let ip = await AsyncStorage.getItem('ip');
+
+    await fetch('http://' + ip + ':3006/fypnames ')
+      .then(res => res.json())
+
+      .then(res => {
+        res.map((element) => {
+          const marketObj = {};
+          marketObj.id = element.id;
+          marketObj.title = element.title;
+          marketObj.leaderemail = element.leaderemail;
+
+          markers.push(marketObj);
+        });
+
+        this.setState({ fyps: markers });
+      });
   }
 
   async Submit() {
@@ -62,6 +89,27 @@ class FYP1_FinalEvaluation extends React.Component {
       })
   
 
+  }
+
+  async setData(title) {
+    
+    let ip = await AsyncStorage.getItem('ip');
+
+    await fetch('http://' + ip + ':3006/formfill_by_title?title='+title+' ')
+    .then(res => res.json())
+    .then(users => {
+
+        this.setState({
+            title: users[0].title, 
+            leaderemail: users[0].leaderemail,
+            member2email: users[0].member2email,
+            member3email: users[0].member3email,
+            supervisor: users[0].supervisor,
+            cosupervisor: users[0].cosupervisor,
+
+        })
+
+    })
   }
 
   renderHeading = () => {
@@ -121,16 +169,20 @@ class FYP1_FinalEvaluation extends React.Component {
             Project Title
           </Text>
           <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-            <Input
-              primary={this.state.primaryFocus}
-              right
-              placeholder="Project Title"
-              onFocus={() => this.setState({ primaryFocus: true })}
-              onBlur={() => this.setState({ primaryFocus: false })}
-              iconContent={<Block />}
-              onChangeText={(title) => this.setState({ title })}
-              shadowless
-            />
+            <Picker
+              selectedValue={this.state.title}
+              style={{ height: 50, width: 100 }}
+              onValueChange={(value) =>
+                 this.setData(value)
+              }
+              >
+              {this.state.fyps.map((item, key) => (
+                <Picker.Item key={key} label={item.title} value={item.title} />
+              )
+              )}
+
+
+            </Picker>
           </Block>
 
 
@@ -293,8 +345,7 @@ class FYP1_FinalEvaluation extends React.Component {
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  onChangeText={(supervisor) => this.setState({ supervisor })}
-                  placeholder="Email"
+                  value={this.state.supervisor}
                 >
                 </FloatingLabel>
               </Block>
@@ -313,8 +364,7 @@ class FYP1_FinalEvaluation extends React.Component {
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  onChangeText={(cosupervisor) => this.setState({ cosupervisor })}
-                  placeholder="Email Supervisor"
+                  value={this.state.cosupervisor}
                 >
                 </FloatingLabel>
               </Block>
@@ -334,7 +384,8 @@ class FYP1_FinalEvaluation extends React.Component {
             style={{
               marginTop: 20,
               fontFamily: 'montserrat-regular',
-              marginBottom: theme.SIZES.BASE / 2
+              marginBottom: theme.SIZES.BASE / 2,
+              fontSize:16
             }}
             color={nowTheme.COLORS.HEADER}
           >
@@ -347,7 +398,8 @@ class FYP1_FinalEvaluation extends React.Component {
             style={{
               marginTop: 10,
               fontFamily: 'montserrat-regular',
-              marginBottom: theme.SIZES.BASE / 2
+              marginBottom: theme.SIZES.BASE / 2,
+              fontSize:16
             }}
             color={nowTheme.COLORS.HEADER}
           >
@@ -361,7 +413,8 @@ class FYP1_FinalEvaluation extends React.Component {
             style={{
               marginTop: 10,
               fontFamily: 'montserrat-regular',
-              marginBottom: theme.SIZES.BASE / 2
+              marginBottom: theme.SIZES.BASE / 2,
+              fontSize:16
             }}
             color={nowTheme.COLORS.HEADER}
           >
@@ -375,7 +428,8 @@ class FYP1_FinalEvaluation extends React.Component {
             style={{
               marginTop: 10,
               fontFamily: 'montserrat-regular',
-              marginBottom: theme.SIZES.BASE / 2
+              marginBottom: theme.SIZES.BASE / 2,
+              fontSize:16
             }}
             color={nowTheme.COLORS.HEADER}
           >
@@ -389,7 +443,8 @@ class FYP1_FinalEvaluation extends React.Component {
             style={{
               marginTop: 10,
               fontFamily: 'montserrat-regular',
-              marginBottom: theme.SIZES.BASE / 2
+              marginBottom: theme.SIZES.BASE / 2,
+              fontSize:16
             }}
             color={nowTheme.COLORS.HEADER}
           >
@@ -403,7 +458,8 @@ class FYP1_FinalEvaluation extends React.Component {
             style={{
               marginTop: 10,
               fontFamily: 'montserrat-regular',
-              marginBottom: theme.SIZES.BASE / 2
+              marginBottom: theme.SIZES.BASE / 2,
+              fontSize:16
             }}
             color={nowTheme.COLORS.HEADER}
           >
@@ -621,8 +677,7 @@ class FYP1_FinalEvaluation extends React.Component {
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  onChangeText={(leaderemail) => this.setState({ leaderemail })}
-                  placeholder="Leader email"
+                  value={this.state.leaderemail}
                 >
                 </FloatingLabel>
 
@@ -652,8 +707,7 @@ class FYP1_FinalEvaluation extends React.Component {
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  onChangeText={(member2email) => this.setState({ member2email })}
-                  placeholder="Member 2 email"
+                  value={this.state.member2email}
                 >
                 </FloatingLabel>
 
@@ -682,8 +736,7 @@ class FYP1_FinalEvaluation extends React.Component {
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  onChangeText={(member3email) => this.setState({ member3email })}
-                  placeholder="Member3 email"
+                  value={this.state.member3email}
                 >
                 </FloatingLabel>
 
@@ -780,7 +833,7 @@ class FYP1_FinalEvaluation extends React.Component {
           {this.renderHeading()}
           {this.renderTitle()}
 
-          {this.renderTeam()}
+          {/* {this.renderTeam()} */}
           {this.renderSupervisors()}
 
           {this.renderrules()}

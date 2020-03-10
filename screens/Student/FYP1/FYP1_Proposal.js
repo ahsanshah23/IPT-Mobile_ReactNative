@@ -7,6 +7,7 @@ import { nowTheme } from '../../../constants';
 import { Card, Button, Icon, Input } from "../../../components";
 import { AsyncStorage } from 'react-native';
 var FloatingLabel = require('react-native-floating-labels');
+import { Table, Rows } from 'react-native-table-component';
 // import articles from "../../../constants/articles";
 const { width } = Dimensions.get("screen");
 
@@ -21,7 +22,7 @@ class FYP1_Proposal extends React.Component {
     this.state = {
       title: "",
       type: "",
-      areaofinterest: "HCI",
+      areaofinterest: "",
       abstract: "",
       leadername: "",
       leaderemail: "",
@@ -30,27 +31,90 @@ class FYP1_Proposal extends React.Component {
       member3name: "",
       member3email: "",
       supervisor: "",
-      cosupervisor: ""
+      cosupervisor: "",
+      tableData: [
+        ['  BigData Analytics', '  HPC', '  Distributed Systems'],
+        ['  Mobile Application', '  HCI/SE', '  Machine Learning'],
+        ['  Deep Learning', '  OS', '  Semantic Web'],
+        ['  Data/Text Mining', '  MPI', '  Security'],
+        ['  Data Science', '  IoTs', '  Bio-informatics'],
+        ['  Computer Vision', '  SDN', '  Crowd Computing']
+      ],
 
     };
-  } 
-
+  }
 
 
   async Submit() {
     const { type, title, areaofinterest, abstract, leadername, leaderemail, member2name, member2email, member3email, member3name, supervisor, cosupervisor } = this.state;
     let ip = await AsyncStorage.getItem('ip');
     let session_email = await AsyncStorage.getItem('email');
-    await fetch('http://'+ip+':3006/fyp1proposal_add?title=' + title + ' &type=' + type + ' &areaofinterest=' + areaofinterest + ' &abstract=' + abstract + ' &leadername=' + leadername + ' &leaderemail=' + 
-    leaderemail + ' &member2name=' + member2name + ' &member2email=' + member2email + ' &member3email=' + member3email + ' &member3name=' + member3name + ' &supervisor=' + supervisor + ' &cosupervisor=' + cosupervisor + '&submitted_by=' + session_email + ' ')
+    await fetch('http://' + ip + ':3006/fyp1proposal_add?title=' + title + ' &type=' + type + ' &areaofinterest=' + areaofinterest + ' &abstract=' + abstract + ' &leadername=' + leadername + ' &leaderemail=' +
+      leaderemail + ' &member2name=' + member2name + ' &member2email=' + member2email + ' &member3email=' + member3email + ' &member3name=' + member3name + ' &supervisor=' + supervisor + ' &cosupervisor=' + cosupervisor + '&submitted_by=' + session_email + ' ')
       .then(users => {
 
-        alert("inserted");  
+        alert("inserted");
         this.props.navigation.navigate('Student_Home')
       })
 
 
   }
+
+  renderInterest = () => {
+    const state = this.state;
+    return (
+      <Block flex style={styles.group}>
+        <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+          <Text
+            h5
+            style={{
+              marginTop: 20,
+              fontFamily: 'montserrat-regular',
+              marginBottom: theme.SIZES.BASE / 2,
+              marginTop: '2.5%',
+              
+            }}
+            color={nowTheme.COLORS.HEADER}
+          >
+            List Of Interests
+            </Text>
+          <Block style={styles.container}>
+            <Table borderStyle={{ borderWidth: 2, borderColor: '#c8e1ff' }}>
+              <Rows data={state.tableData} textStyle={{fontSize:16}} />
+            </Table>
+          </Block>
+
+          <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+            <Block style={{ flexDirection: 'column' }}>
+              <Text
+                p
+                style={{
+                  fontFamily: 'montserrat-regular',
+                  marginBottom: theme.SIZES.BASE / 2,
+                  marginTop: '2.5%',
+                  
+                }}
+                color={nowTheme.COLORS.HEADER}
+              >
+                Write your area of interest(s) :
+              </Text>
+              <Block style={{ flexDirection: 'column' }}>
+                <FloatingLabel
+                  inputStyle={styles.input1}
+                  style={styles.formInput}
+                  onChangeText={(areaofinterest) => this.setState({ areaofinterest })}
+                  placeholder="Area Of Interest(s)"
+                >
+                </FloatingLabel>
+              </Block>
+
+
+            </Block>
+          </Block>
+        </Block>
+      </Block>
+    );
+  };
 
   renderHeading = () => {
     return (
@@ -140,362 +204,6 @@ class FYP1_Proposal extends React.Component {
               <Radio iconName={"lens"} label={"Experiment based"} value={"Experimental Based"} />
             </RadioGroup>
 
-          </Block>
-        </Block>
-      </Block>
-    );
-  };
-
-  renderInterest = () => {
-    const { selectedInterest1, selectedInterest2, selectedInterest3, selectedInterest4 } = this.state;
-    const { ischecked1, ischecked2, ischecked3, ischecked4, ischecked5, ischecked6, ischecked7, ischecked8, ischecked9, ischecked10, ischecked11, ischecked12, ischecked13, ischecked14, ischecked15, ischecked16, ischecked17, ischecked18 } = this.state;
-    return (
-      <Block flex style={styles.group}>
-        <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-          <Text
-            h5
-            style={{
-              fontFamily: 'montserrat-regular',
-              marginBottom: theme.SIZES.BASE / 2
-            }}
-            color={nowTheme.COLORS.HEADER}
-          >
-            Choose your area of interest
-          </Text>
-          <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked1 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked1: !ischecked1 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                BigData Analytics
-
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked2 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked2: !ischecked2 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                HPC
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked3 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked3: !ischecked3 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Mobile Application
-
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked4 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked4: !ischecked4 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Machine Learning
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked5 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked5: !ischecked5 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Distributed Systems
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked6 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked6: !ischecked6 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                HCI/SE
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked7 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked7: !ischecked7 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Deep Learning
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked8 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked8: !ischecked8 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                OS
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked9 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked9: !ischecked9 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Semantic Web
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked10 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked10: !ischecked10 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Data/Text Mining
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked11 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked11: !ischecked11 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                MPI
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked12 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked12: !ischecked12 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                SDN
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked13 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked13: !ischecked13 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Data Science
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked14 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked14: !ischecked14 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                IoTs
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked15 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked15: !ischecked15 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Bio-informatics
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked16 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked16: !ischecked16 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Computer Vision
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked17 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked17: !ischecked17 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Security
-              </Text>
-            </Block>
-
-            <Block style={{ flexDirection: 'row' }}>
-              <Checkbox
-                status={ischecked18 ? 'checked' : 'unchecked'}
-                onPress={() => { this.setState({ ischecked18: !ischecked18 }); }}
-              />
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Crowd Computing
-              </Text>
-            </Block>
-
-            <FloatingLabel
-              inputStyle={styles.input1}
-              style={styles.formInput}
-              // onChangeText={(supervisor) => this.setState({ supervisor })}
-              placeholder="Any other area of interest"
-            >
-            </FloatingLabel>
           </Block>
         </Block>
       </Block>
@@ -730,7 +438,7 @@ class FYP1_Proposal extends React.Component {
               style={styles.button}
               color={nowTheme.COLORS.PRIMARY}
               onPress={this.Submit.bind(this)}
-              
+
             >
               <Text
                 style={{ fontFamily: 'montserrat-bold', fontSize: 14 }}
@@ -748,7 +456,7 @@ class FYP1_Proposal extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  button:{
+  button: {
     backgroundColor: "orange",
     color: "white"
   },
