@@ -5,6 +5,7 @@ import { nowTheme } from '../../../constants';
 var FloatingLabel = require('react-native-floating-labels');
 import { Card } from 'react-native-paper';
 import { AsyncStorage } from 'react-native';
+
 // import articles from "../../../constants/articles";
 const { width } = Dimensions.get("screen");
 
@@ -16,14 +17,11 @@ class FYP1_Proposal_View_Student extends React.Component {
         this.state = {
             title: "",
             type: "",
-            areaofinterest: "HCI",
+
             abstract: "",
-            leadername: "",
-            leaderemail: "",
-            member2name: "",
-            member2email: "",
-            member3name: "",
-            member3email: "",
+            leaderID: "",
+            member1ID: "",
+            member2ID: "",
             supervisor: "",
             cosupervisor: "",
             comment: "",
@@ -38,29 +36,35 @@ class FYP1_Proposal_View_Student extends React.Component {
     }
 
     async getdata() {
-        let ip = await AsyncStorage.getItem('ip');
-        let session_email = await AsyncStorage.getItem('email');
-        fetch('http://' + ip + ':3006/fyp1proposal_view?Email=' + session_email + '')
+        fetch('http://192.168.0.109:45455/api/fyp1get/getproposaldetails')
             .then(res => res.json())
             .then(users => {
+
                 this.setState({
-                    title: users[0].project_title,
-                    type: users[0].project_type,
-                    areaofinterest: users[0].area_of_interest,
-                    abstract: users[0].abstract,
-                    leaderemail: users[0].leader_email,
-                    leadername: users[0].leader_name,
-                    member2email: users[0].member2_email,
-                    member2name: users[0].member2_name,
-                    member3email: users[0].member3_email,
-                    member3name: users[0].member3_name,
-                    supervisor: users[0].supervisor,
-                    cosupervisor: users[0].cosupervisor,
-                    comment: users[0].comment,
-                    status: users[0].status,
-                    submitted_by: users[0].submitted_by
+
+                    title: users[0].ProjectTitle,
+
+                    type: users[0].ProjectType,
+
+                    abstract: users[0].Abstract,
+
+                    leaderID: users[0].LeaderID,
+
+                    member1ID: users[0].Member1ID,
+
+                    member2ID: users[0].Member2ID,
+
+                    supervisor: users[0].SupervisorID,
+
+                    cosupervisor: users[0].CoSupervisorID,
+
+                    comment: users[0].Comment,
+
+                    status: users[0].Status,
+
                 })
             })
+
     }
 
     renderHeading = () => {
@@ -196,29 +200,29 @@ class FYP1_Proposal_View_Student extends React.Component {
                     >
                         Abstract
                     </Text>
-                    <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Type here to add abstract."
-                            multiline={true}
-                            autoCapitalize="sentences"
-                            underlineColorAndroid="transparent"
-                            selectionColor={'white'}
-                            maxLength={5000}
-                            returnKeyType="done"
-                            autoCorrect={false}
-                            blurOnSubmit={true}
-                            value={abstract}
-                            editable={false}
-                        />
-                    </Block>
+
+
+                    <Text
+                        p
+                        style={{
+                            fontFamily: 'montserrat-regular',
+                            marginBottom: theme.SIZES.BASE / 2,
+                            marginTop: '2.5%',
+
+                        }}
+                        color={nowTheme.COLORS.HEADER}
+                    >
+                        {abstract}
+                    </Text>
+
+
                 </Block>
             </Block>
         );
     };
 
     renderTeam = () => {
-        const { leaderemail, leadername, member2email, member2name, member3email, member3name } = this.state;
+        const { leaderID, member1ID, member2ID } = this.state;
         return (
             <Block flex style={styles.group}>
                 <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
@@ -245,7 +249,7 @@ class FYP1_Proposal_View_Student extends React.Component {
                                 }}
                                 color={nowTheme.COLORS.HEADER}
                             >
-                                Member 1 : (Leader)
+                                Leader ID:
                             </Text>
                             <Block style={{ flexDirection: 'column' }}>
 
@@ -256,12 +260,40 @@ class FYP1_Proposal_View_Student extends React.Component {
                                         fontFamily: 'montserrat-regular',
                                         marginBottom: theme.SIZES.BASE / 2,
                                         marginTop: '2.5%',
-                                        fontSize: 16,
 
                                     }}
                                     color={nowTheme.COLORS.HEADER}
                                 >
-                                    Email: {leaderemail}
+                                    {leaderID}
+                                </Text>
+
+                            </Block>
+                            <Text
+                                p
+                                style={{
+                                    fontFamily: 'montserrat-regular',
+                                    marginBottom: theme.SIZES.BASE / 2,
+                                    marginTop: '2.5%',
+                                    fontWeight: '500'
+                                }}
+                                color={nowTheme.COLORS.HEADER}
+                            >
+                                Member 1 :
+                            </Text>
+                            <Block style={{ flexDirection: 'column' }}>
+
+
+                                <Text
+                                    p
+                                    style={{
+                                        fontFamily: 'montserrat-regular',
+                                        marginBottom: theme.SIZES.BASE / 2,
+                                        marginTop: '2.5%',
+
+                                    }}
+                                    color={nowTheme.COLORS.HEADER}
+                                >
+                                    {member1ID}
                                 </Text>
 
                             </Block>
@@ -286,42 +318,11 @@ class FYP1_Proposal_View_Student extends React.Component {
                                         fontFamily: 'montserrat-regular',
                                         marginBottom: theme.SIZES.BASE / 2,
                                         marginTop: '2.5%',
-                                        fontSize: 16,
 
                                     }}
                                     color={nowTheme.COLORS.HEADER}
                                 >
-                                    Email: {member2email}
-                                </Text>
-
-                            </Block>
-                            <Text
-                                p
-                                style={{
-                                    fontFamily: 'montserrat-regular',
-                                    marginBottom: theme.SIZES.BASE / 2,
-                                    marginTop: '2.5%',
-                                    fontWeight: '500'
-                                }}
-                                color={nowTheme.COLORS.HEADER}
-                            >
-                                Member 3 :
-                            </Text>
-                            <Block style={{ flexDirection: 'column' }}>
-
-
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16,
-
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Email: {member3email}
+                                    {member2ID}
                                 </Text>
                             </Block>
                         </Block>
@@ -472,7 +473,6 @@ class FYP1_Proposal_View_Student extends React.Component {
                     <Card style={styles.card}>
                         {this.renderHeading()}
                         {this.renderTitle()}
-                        {this.renderInterest()}
                         {this.renderAbstract()}
                         {this.renderTeam()}
                         {this.renderEnd()}

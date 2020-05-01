@@ -23,33 +23,33 @@ export default class Onboarding extends React.Component {
   }
 
   async onLogin() {
-    const { email, password } = this.state;
-    let ip = await AsyncStorage.getItem('ip');
-    await fetch('http://'+ip+':3006/userlogin?Email=' + email + '&Password=' + password + '')
-      .then(res => res.json())
-      .then(users => {
-        if (users == 0) {
-          alert("invalid credentials");
-        }
-        else {
-          console.warn(users[0]);
-          if (users[0].Role == "Student") {
-            AsyncStorage.setItem('email', email);
-            AsyncStorage.setItem('name', users[0].Name);
+    // const { email, password } = this.state;
+    // let ip = await AsyncStorage.getItem('ip');
+    // await fetch('http://'+ip+':3006/userlogin?Email=' + email + '&Password=' + password + '')
+    //   .then(res => res.json())
+    //   .then(users => {
+    //     if (users == 0) {
+    //       alert("invalid credentials");
+    //     }
+    //     else {
+    //       console.warn(users[0]);
+    //       if (users[0].Role == "Student") {
+    //         AsyncStorage.setItem('email', email);
+            AsyncStorage.setItem('ID', 163942);
             this.props.navigation.navigate('Student_Home');
-          }
-          else if (users[0].Role == "Teacher") {
-            AsyncStorage.setItem('email',email);
-            AsyncStorage.setItem('name', users[0].Name);
-            this.props.navigation.navigate('Teacher_Home');
-          }
-          else {
-            AsyncStorage.setItem('email', email);
-            AsyncStorage.setItem('name', users[0].Name);
-            this.props.navigation.navigate('External_Home');
-          }
-        }
-      })
+  //         }
+  //         else if (users[0].Role == "Teacher") {
+  //           AsyncStorage.setItem('email',email);
+  //           AsyncStorage.setItem('name', users[0].Name);
+  //           this.props.navigation.navigate('Teacher_Home');
+  //         }
+  //         else {
+  //           AsyncStorage.setItem('email', email);
+  //           AsyncStorage.setItem('name', users[0].Name);
+  //           this.props.navigation.navigate('External_Home');
+  //         }
+  //       }
+  //     })
   }
 
   handleSubmitSignup = () => {

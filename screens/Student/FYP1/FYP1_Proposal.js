@@ -2,14 +2,11 @@ import React from "react";
 import { StyleSheet, Dimensions, ScrollView, CheckBox, TextInput } from "react-native";
 import { Block, theme, Text } from "galio-framework";
 import RadioGroup, { Radio } from "react-native-radio-input";
-import { Checkbox } from 'react-native-paper';
 import { nowTheme } from '../../../constants';
-import { Card, Button, Icon, Input } from "../../../components";
+import {  Button, Input } from "../../../components";
 import { AsyncStorage } from 'react-native';
 var FloatingLabel = require('react-native-floating-labels');
 import { Table, Rows } from 'react-native-table-component';
-// import articles from "../../../constants/articles";
-const { width } = Dimensions.get("screen");
 
 class FYP1_Proposal extends React.Component {
   state = {
@@ -20,44 +17,69 @@ class FYP1_Proposal extends React.Component {
     super(props);
     //Initial State
     this.state = {
+
       title: "",
+
       type: "",
+
       areaofinterest: "",
+
       abstract: "",
-      leadername: "",
-      leaderemail: "",
-      member2name: "",
-      member2email: "",
-      member3name: "",
-      member3email: "",
+
+      leaderID: "",
+
+      member1ID: "",
+
+      member2ID: "",
+
       supervisor: "",
+
       cosupervisor: "",
-      tableData: [
-        ['  BigData Analytics', '  HPC', '  Distributed Systems'],
-        ['  Mobile Application', '  HCI/SE', '  Machine Learning'],
-        ['  Deep Learning', '  OS', '  Semantic Web'],
-        ['  Data/Text Mining', '  MPI', '  Security'],
-        ['  Data Science', '  IoTs', '  Bio-informatics'],
-        ['  Computer Vision', '  SDN', '  Crowd Computing']
-      ],
+
 
     };
   }
 
 
+
   async Submit() {
-    const { type, title, areaofinterest, abstract, leadername, leaderemail, member2name, member2email, member3email, member3name, supervisor, cosupervisor } = this.state;
+
+    const { type, title, abstract, leaderID, member1ID, member2ID, supervisor, cosupervisor } = this.state;
     let ip = await AsyncStorage.getItem('ip');
-    let session_email = await AsyncStorage.getItem('email');
-    await fetch('http://' + ip + ':3006/fyp1proposal_add?title=' + title + ' &type=' + type + ' &areaofinterest=' + areaofinterest + ' &abstract=' + abstract + ' &leadername=' + leadername + ' &leaderemail=' +
-      leaderemail + ' &member2name=' + member2name + ' &member2email=' + member2email + ' &member3email=' + member3email + ' &member3name=' + member3name + ' &supervisor=' + supervisor + ' &cosupervisor=' + cosupervisor + '&submitted_by=' + session_email + ' ')
-      .then(users => {
 
-        alert("inserted");
-        this.props.navigation.navigate('Student_Home')
+    fetch('http://192.168.0.109:45455/api/fyp1post/addproposalstudent', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "ProjectTitle": title,
+        "ProjectType": type,
+        "Abstract": abstract,
+        "SupervisorID": supervisor,
+        "CoSupervisorID": cosupervisor,
+        "LeaderID": leaderID,
+        "Member1ID": member1ID,
+        "Member2ID": member2ID
       })
+    })
+      .then((response) => response.json())
+        alert("Inserted");
+        this.props.navigation.navigate('Student_Home')
+      //If response is in json then in success
+      .then((responseJson) => {
+        //Success 
+        console.log(responseJson);
+      })
+      //If response is not in json then in error
+      .catch((error) => {
+        //Error 
+        alert("Error");
+        console.error(error);
+      });
 
-
+ 
   }
 
   renderInterest = () => {
@@ -72,7 +94,7 @@ class FYP1_Proposal extends React.Component {
               fontFamily: 'montserrat-regular',
               marginBottom: theme.SIZES.BASE / 2,
               marginTop: '2.5%',
-              
+
             }}
             color={nowTheme.COLORS.HEADER}
           >
@@ -80,7 +102,7 @@ class FYP1_Proposal extends React.Component {
             </Text>
           <Block style={styles.container}>
             <Table borderStyle={{ borderWidth: 2, borderColor: '#c8e1ff' }}>
-              <Rows data={state.tableData} textStyle={{fontSize:16}} />
+              <Rows data={state.tableData} textStyle={{ fontSize: 16 }} />
             </Table>
           </Block>
 
@@ -92,7 +114,7 @@ class FYP1_Proposal extends React.Component {
                   fontFamily: 'montserrat-regular',
                   marginBottom: theme.SIZES.BASE / 2,
                   marginTop: '2.5%',
-                  
+
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
@@ -271,23 +293,15 @@ class FYP1_Proposal extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Member 1 : (Leader)
+                Leader ID :
               </Text>
               <Block style={{ flexDirection: 'column' }}>
 
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  onChangeText={(leadername) => this.setState({ leadername })}
-                  placeholder="Name"
-                >
-                </FloatingLabel>
-
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(leaderemail) => this.setState({ leaderemail })}
-                  placeholder="Email"
+                  onChangeText={(leaderID) => this.setState({ leaderID })}
+                  placeholder="ID"
                 >
                 </FloatingLabel>
 
@@ -301,25 +315,17 @@ class FYP1_Proposal extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Member 2 :
+                Member 1 ID :
               </Text>
               <Block style={{ flexDirection: 'column' }}>
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  onChangeText={(member2name) => this.setState({ member2name })}
-                  placeholder="Name"
+                  onChangeText={(member1ID) => this.setState({ member1ID })}
+                  placeholder="ID"
                 >
                 </FloatingLabel>
 
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(member2email) => this.setState({ member2email })}
-                  placeholder="Email"
-
-                >
-                </FloatingLabel>
 
               </Block>
               <Text
@@ -331,22 +337,15 @@ class FYP1_Proposal extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Member 3 :
+                Member 2 ID :
               </Text>
               <Block style={{ flexDirection: 'column' }}>
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(member3name) => this.setState({ member3name })}
-                  placeholder="Name"
-                >
-                </FloatingLabel>
 
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  onChangeText={(member3email) => this.setState({ member3email })}
-                  placeholder="Email"
+                  onChangeText={(member2ID) => this.setState({ member2ID })}
+                  placeholder="ID"
                 >
                 </FloatingLabel>
               </Block>
@@ -382,14 +381,14 @@ class FYP1_Proposal extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Supervisor NU Email :
+                Supervisor ID :
               </Text>
               <Block style={{ flexDirection: 'column' }}>
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
                   onChangeText={(supervisor) => this.setState({ supervisor })}
-                  placeholder="Email"
+                  placeholder="ID"
                 >
                 </FloatingLabel>
               </Block>
@@ -402,14 +401,14 @@ class FYP1_Proposal extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Co-supervisor(s) (if any) NU Email :
+                Co-supervisor(s) (if any) ID :
               </Text>
               <Block style={{ flexDirection: 'column' }}>
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
                   onChangeText={(cosupervisor) => this.setState({ cosupervisor })}
-                  placeholder="Email Supervisor"
+                  placeholder="ID"
                 >
                 </FloatingLabel>
               </Block>
@@ -427,7 +426,7 @@ class FYP1_Proposal extends React.Component {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30 }}>
           {this.renderHeading()}
           {this.renderTitle()}
-          {this.renderInterest()}
+          {/* {this.renderInterest()} */}
           {this.renderAbstract()}
           {this.renderTeam()}
           {this.renderEnd()}
