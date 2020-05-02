@@ -23,7 +23,7 @@ class Register extends React.Component {
         super(props);
         //Initial State
         this.state = {
-            email: "",
+            username: "",
             password: "",
             name: ""
 
@@ -32,14 +32,37 @@ class Register extends React.Component {
 
 
     async onSignup() {
-        const { email, password, name } = this.state;
+        const { username, password, name } = this.state;
         let ip = await AsyncStorage.getItem('ip');
-        await fetch('http://'+ip+':3006/useradd?Name=' + name + '&Email=' + email + '&Password=' + password + '')
-            .then(users => {
+        fetch('http://192.168.0.108:45459/api/fyp2post/RegisterJury', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
 
-                alert("inserted");
+                "Username": username,
+                "Name": name,
+                "Password": password
+
+
+            })
+        })
+            .then((response) => response.json())
+
+            //If response is in json then in success
+            .then((responseJson) => {
+                //Success 
+                alert("Registered!");
                 this.props.navigation.navigate('Onboarding')
             })
+            //If response is not in json then in error
+            .catch((error) => {
+                //Error 
+                alert("Error");
+                console.error(error);
+            });
     }
 
     render() {
@@ -78,7 +101,7 @@ class Register extends React.Component {
 
                                                     <Block width={width * 0.8}>
                                                         <Input
-                                                            placeholder="Email"
+                                                            placeholder="UserName"
                                                             keyboardType="email-address"
 
                                                             style={styles.inputs}
@@ -91,7 +114,7 @@ class Register extends React.Component {
                                                                     style={styles.inputIcons}
                                                                 />
                                                             }
-                                                            onChangeText={(email) => this.setState({ email })}
+                                                            onChangeText={(username) => this.setState({ username })}
                                                         />
                                                     </Block>
                                                     <Block width={width * 0.8} style={{ marginBottom: 5 }}>

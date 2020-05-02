@@ -36,7 +36,11 @@ class FYP1_Proposal_View_Student extends React.Component {
     }
 
     async getdata() {
-        fetch('http://192.168.0.109:45455/api/fyp1get/getproposaldetails')
+
+        let id = await AsyncStorage.getItem('ID');
+      
+        await fetch('http://192.168.0.108:45457/api/fyp1get/getproposaldetails?id='+id+' ' )
+
             .then(res => res.json())
             .then(users => {
 
