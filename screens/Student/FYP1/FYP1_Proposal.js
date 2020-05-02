@@ -47,7 +47,7 @@ class FYP1_Proposal extends React.Component {
     const { type, title, abstract, leaderID, member1ID, member2ID, supervisor, cosupervisor } = this.state;
     let ip = await AsyncStorage.getItem('ip');
 
-    fetch('http://192.168.0.109:45455/api/fyp1post/addproposalstudent', {
+    fetch('http://'+ip+'/api/fyp1post/addproposalstudent', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',

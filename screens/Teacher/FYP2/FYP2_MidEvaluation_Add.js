@@ -19,22 +19,24 @@ class FYP2_MidEvaluation_Add extends React.Component {
     //Initial State
     this.state = {
       title: "",
-      member1Name: "",
-      member1Email: "",
-      member2Name: "",
-      member2Email: "",
-      member3Name: "",
-      member3Email: "",
-      supervisorName: "",
-      supervisorEmail: "",
-      coSupervisorName: "",
-      coSupervisorEmail: "",
+
+      leaderID: "",
+
+      member1ID: "",
+
+      member2ID: "",
+
+      supervisorID: "",
+
+      coSupervisorID: "",
+
       projectProgress: "",
+
       documentationStatus: "",
+
       progressComments: "",
-      evaluatorEmail: "",
-      coevaluatorEmail: "",
-      fyps:[]
+
+      fyps: []
     };
   }
 
@@ -46,16 +48,17 @@ class FYP2_MidEvaluation_Add extends React.Component {
 
     const markers = [];
     let ip = await AsyncStorage.getItem('ip');
+    let ID = await AsyncStorage.getItem('ID1');
 
-    await fetch('http://' + ip + ':3006/fypnames ')
+    await fetch('http://192.168.0.108:45459/api/fyp1get/GetFypNames?id=' + ID + ' ')
       .then(res => res.json())
 
       .then(res => {
         res.map((element) => {
           const marketObj = {};
-          marketObj.id = element.id;
-          marketObj.title = element.title;
-          marketObj.leaderemail = element.leaderemail;
+          marketObj.id = element.FypID;
+          marketObj.title = element.ProjectName;
+          // marketObj.leaderemail = element.leaderemail;
 
           markers.push(marketObj);
         });
@@ -65,37 +68,67 @@ class FYP2_MidEvaluation_Add extends React.Component {
   }
 
   async setData(title) {
-    
+
     let ip = await AsyncStorage.getItem('ip');
 
-    await fetch('http://' + ip + ':3006/formfill_by_title?title='+title+' ')
-    .then(res => res.json())
-    .then(users => {
+    await fetch('http://192.168.0.108:45459/api/fyp1get/GetFypDetailsByTitle?title=' + title + ' ')
+      .then(res => res.json())
+      .then(users => {
+        alert(users[0].LeaderID);
 
         this.setState({
-            title: users[0].title, 
-            member1Email: users[0].leaderemail,
-            member2Email: users[0].member2email,
-            member3Email: users[0].member3email,
-            supervisorEmail: users[0].supervisor,
-            coSupervisorEmail: users[0].cosupervisor,
+          title: title,
+          fypID: users[0].FypID,
+          leaderID: users[0].LeaderID,
+          member1ID: users[0].Member1ID,
+          member2ID: users[0].Member2ID,
+          supervisorID: users[0].SupervisorEmpID,
+          coSupervisorID: users[0].CoSuperVisorID,
 
         })
 
-    })
+      })
   }
 
   async Submit() {
-    const { title, member1Name, member2Name, member3Name, member1Email, member2Email, member3Email, supervisorEmail, coSupervisorEmail, projectProgress, documentationStatus, progressComments, evaluatorEmail, coevaluatorEmail } = this.state;
+    const { fypID, leaderID, member1ID, member2ID, projectProgress, documentationStatus, progressComments } = this.state;
     let ip = await AsyncStorage.getItem('ip');
     let session_email = await AsyncStorage.getItem('email');
-    await fetch('http://' + ip + ':3006/fyp2midevaluation_add?title=' + title + ' &member1Email=' + member1Email + ' &member2Email=' + member2Email + ' &member1Name=' + member1Name + ' &member2Name=' + member2Name +
-      ' &member3Email=' + member3Email + ' &supervisorEmail=' + supervisorEmail + ' &coSupervisorEmail=' + coSupervisorEmail + ' &member3Name=' + member3Name +
-      ' &projectProgress=' + projectProgress + ' &documentationStatus=' + documentationStatus + ' &progressComments=' + progressComments + ' &evaluatorEmail=' + evaluatorEmail + ' &coevaluatorEmail=' + coevaluatorEmail + '&submitted_by=' + session_email + ' ')
-      .then(users => {
-        alert("inserted");
+
+    fetch('http://192.168.0.108:45459/api/fyp2post/AddMidEvaluationJury', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+
+        "FypID": fypID,
+        "FormID": 3,
+        "ProjectProgress": projectProgress,
+        "DocumentationStatus": documentationStatus,
+        "ProgressComments": progressComments,
+        "LeaderID": leaderID,
+        "Member1ID": member1ID,
+        "Member2ID": member2ID
+
+
+      })
+    })
+      .then((response) => response.json())
+
+      //If response is in json then in success
+      .then((responseJson) => {
+        //Success 
+        alert("Inserted");
         this.props.navigation.navigate('Teacher_Home')
       })
+      //If response is not in json then in error
+      .catch((error) => {
+        //Error 
+        alert("Error");
+        console.error(error);
+      });
   }
 
   renderHeading = () => {
@@ -165,9 +198,9 @@ class FYP2_MidEvaluation_Add extends React.Component {
               selectedValue={this.state.title}
               style={{ height: 50, width: 100 }}
               onValueChange={(value) =>
-                 this.setData(value)
+                this.setData(value)
               }
-              >
+            >
               {this.state.fyps.map((item, key) => (
                 <Picker.Item key={key} label={item.title} value={item.title} />
               )
@@ -207,23 +240,9 @@ class FYP2_MidEvaluation_Add extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Member 1 : (Leader)
+                Leader ID : {this.state.leaderID}
               </Text>
-              <Block style={{ flexDirection: 'column' }}>
-                {/* <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(member1Name) => this.setState({ member1Name })}
-                  placeholder="Name"
-                >
-                </FloatingLabel> */}
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  value={this.state.member1Email}
-                >
-                </FloatingLabel>
-              </Block>
+
               <Text
                 p
                 style={{
@@ -233,23 +252,9 @@ class FYP2_MidEvaluation_Add extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Member 2 :
+                Member 1 ID : {this.state.member1ID}
               </Text>
-              <Block style={{ flexDirection: 'column' }}>
-                {/* <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(member2Name) => this.setState({ member2Name })}
-                  placeholder="Name"
-                >
-                </FloatingLabel> */}
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  value={this.state.member2Email}
-                >
-                </FloatingLabel>
-              </Block>
+
               <Text
                 p
                 style={{
@@ -259,23 +264,9 @@ class FYP2_MidEvaluation_Add extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Member 3 :
+                Member 2 ID : {this.state.member2ID}
               </Text>
-              <Block style={{ flexDirection: 'column' }}>
-                {/* <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(member3Name) => this.setState({ member3Name })}
-                  placeholder="Name"
-                >
-                </FloatingLabel> */}
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  value={this.state.member3Email}
-                >
-                </FloatingLabel>
-              </Block>
+
             </Block>
           </Block>
         </Block>
@@ -309,23 +300,9 @@ class FYP2_MidEvaluation_Add extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Supervisor :
+                Supervisor : {this.state.supervisorID}
               </Text>
-              <Block style={{ flexDirection: 'column' }}>
-                {/* <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(supervisorName) => this.setState({ supervisorName })}
-                  placeholder="Name"
-                >
-                </FloatingLabel> */}
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  value={this.state.supervisorEmail}
-                >
-                </FloatingLabel>
-              </Block>
+
               <Text
                 p
                 style={{
@@ -335,23 +312,9 @@ class FYP2_MidEvaluation_Add extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Co-supervisor(s) (if any) :
+                Co-supervisor(s) (if any) : {this.state.coSupervisorID}
               </Text>
-              <Block style={{ flexDirection: 'column' }}>
-                {/* <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(coSupervisorName) => this.setState({ coSupervisorName })}
-                  placeholder="Name"
-                >
-                </FloatingLabel> */}
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  value={this.state.coSupervisorEmail}
-                >
-                </FloatingLabel>
-              </Block>
+
             </Block>
           </Block>
         </Block>
@@ -439,70 +402,6 @@ class FYP2_MidEvaluation_Add extends React.Component {
     );
   };
 
-  renderJury = () => {
-    return (
-      <Block flex style={styles.group}>
-        <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-          <Text
-            h5
-            style={{
-              marginTop: 20,
-              fontFamily: 'montserrat-regular',
-              marginBottom: theme.SIZES.BASE / 2
-            }}
-            color={nowTheme.COLORS.HEADER}
-          >
-            Evaluators:
-          </Text>
-          <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-            <Block style={{ flexDirection: 'column' }}>
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Evaluator's Email:
-              </Text>
-              <Block style={{ flexDirection: 'column' }}>
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(evaluatorEmail) => this.setState({ evaluatorEmail })}
-                  placeholder="Email"
-                >
-                </FloatingLabel>
-              </Block>
-
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Co-Evaluator's Email:
-              </Text>
-              <Block style={{ flexDirection: 'column' }}>
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(coevaluatorEmail) => this.setState({ coevaluatorEmail })}
-                  placeholder="Email"
-                >
-                </FloatingLabel>
-              </Block>
-            </Block>
-          </Block>
-        </Block>
-      </Block>
-    );
-  };
 
   render() {
     return (
@@ -516,7 +415,6 @@ class FYP2_MidEvaluation_Add extends React.Component {
           {this.renderTeam()}
           {this.renderAdvisors()}
           {this.renderProject()}
-          {this.renderJury()}
 
           <Block style={{ flex: 0.33, flexDirection: 'row', marginTop: theme.SIZES.BASE, justifyContent: 'center', alignItems: 'center' }}>
             <Button

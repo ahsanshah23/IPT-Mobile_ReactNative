@@ -30,7 +30,7 @@ class FYP1_Proposal_List extends React.Component {
         let ip = await AsyncStorage.getItem('ip');
         let session_email = await AsyncStorage.getItem('email');
 
-        await fetch('http://192.168.0.109:45455/api/fyp1get/GetProposalsNameSupervisor')
+        await fetch('http://'+ip+'/api/fyp1get/GetProposalsNameSupervisor')
             .then(res => res.json())
 
             .then(res => {

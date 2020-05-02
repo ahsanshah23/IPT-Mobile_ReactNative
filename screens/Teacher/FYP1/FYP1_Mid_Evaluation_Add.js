@@ -20,38 +20,38 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
     super(props);
     //Initial State
     this.state = {
-      fypID:"",
+      fypID: "",
 
       title: "",
-      
+
       leaderID: "",
-      
+
       member1ID: "",
-      
+
       member2ID: "",
-      
+
       supervisor: "",
-      
+
       cosupervisor: "",
-      
+
       status: "",
-      
+
       markcriteria1: "",
       markcriteria2: "",
       markcriteria3: "",
       markcriteria4: "",
       markcriteria5: "",
 
-      
+
       deliverable1: "",
       deliverable2: "",
       deliverable3: "",
       deliverable4: "",
       deliverable5: "",
-      
+
       changes: "",
       comments: "",
-     
+
       fyps: [],
     };
   }
@@ -65,7 +65,7 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
     const markers = [];
     let ip = await AsyncStorage.getItem('ip');
 
-    await fetch('http://192.168.43.42:45455/api/fyp1get/GetFypNames')
+    await fetch('http://' + ip + '/api/fyp1get/GetFypNames')
       .then(res => res.json())
 
       .then(res => {
@@ -87,47 +87,40 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
     let ip = await AsyncStorage.getItem('ip');
     let session_email = await AsyncStorage.getItem('email');
 
-    fetch('http://192.168.43.42:45455/api/fyp1post/AddProposalEvaluationJury', {
+    fetch('http://' + ip + '/api/fyp1post/AddProposalEvaluationJury', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        "FypID" : fypID,
-    "FormID" : 1,
-    "Criteria1Marks" : markcriteria1,
-    "Criteria2Marks" : markcriteria2,
-    "Criteria3Marks" : markcriteria3,
-    "Criteria4Marks" : markcriteria4,
-    "Criteria5Marks" : markcriteria5,
-    "Deliverables1" : deliverable1,
-    "Deliverables2" : deliverable2,
-    "Deliverables3" : deliverable3,
-    "Deliverables4" : deliverable4,
-    "Deliverables5" : deliverable5,
-    "ChangesRecommeneded" : changes,
-    "DefenceStatus" : status,
-    "LeaderID" : leaderID,
-    "Member1ID": member1ID,
-    "Member2ID": member2ID
-        // ProjectTitle": title,
-        // "ProjectType": type,
-        // "Abstract": abstract,
-        // "SupervisorID": supervisor,
-        // "CoSupervisorID": cosupervisor,
-        // "LeaderID": leaderID,
-        // "Member1ID": member1ID,
-        // "Member2ID": member2ID
+        "FypID": fypID,
+        "FormID": 1,
+        "Criteria1Marks": markcriteria1,
+        "Criteria2Marks": markcriteria2,
+        "Criteria3Marks": markcriteria3,
+        "Criteria4Marks": markcriteria4,
+        "Criteria5Marks": markcriteria5,
+        "Deliverables1": deliverable1,
+        "Deliverables2": deliverable2,
+        "Deliverables3": deliverable3,
+        "Deliverables4": deliverable4,
+        "Deliverables5": deliverable5,
+        "ChangesRecommeneded": changes,
+        "DefenceStatus": status,
+        "LeaderID": leaderID,
+        "Member1ID": member1ID,
+        "Member2ID": member2ID
+
       })
     })
       .then((response) => response.json())
-        alert("Inserted");
-        this.props.navigation.navigate('Student_Home')
+   
       //If response is in json then in success
       .then((responseJson) => {
         //Success 
-        console.log(responseJson);
+        alert("Inserted");
+    this.props.navigation.navigate('Student_Home')
       })
       //If response is not in json then in error
       .catch((error) => {
@@ -136,16 +129,7 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
         console.error(error);
       });
 
-    // await fetch('http://' + ip + ':3006/fyp1midevaluation_add?title=' + title + ' &leadername=' + leadername + ' &leaderemail=' + leaderemail + ' &member2name=' + member2name +
-    //   ' &member2email=' + member2email + ' &member3email=' + member3email + ' &member3name=' + member3name + ' &supervisor=' + supervisor + ' &cosupervisor=' + cosupervisor +
-    //   '&status=' + status + '&markcriteria1=' + markcriteria1 + ' &markcriteria2=' + markcriteria2 + ' &markcriteria3=' + markcriteria3 + ' &markcriteria4=' + markcriteria4 + ' &markcriteria5=' + markcriteria5
-    //   + '&markcriteria6=' + markcriteria6 + ' &deliverable1=' + deliverable1 + ' &deliverable2=' + deliverable2 + ' &deliverable3=' + deliverable3 + ' &deliverable4=' + deliverable4
-    //   + '&deliverable5=' + deliverable5 + ' &changes=' + changes + ' &comments=' + comments + ' &evaluator=' + evaluator + ' &coevaluator=' + coevaluator + ' &submitted_by=' + session_email + ' ')
-    //   .then(users => {
-
-    //     alert("inserted");
-    //     this.props.navigation.navigate('Teacher_Home')
-    //   })
+  
   }
 
   renderHeading = () => {
@@ -193,26 +177,26 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
   }
 
   async setData(title) {
-    
+
     let ip = await AsyncStorage.getItem('ip');
 
-    await fetch('http://192.168.43.42:45455//api/fyp1get/GetFypDetailsByTitle')
-    .then(res => res.json())
-    .then(users => {
-      alert(users[0].LeaderID);
+    await fetch('http://'+ip+'/api/fyp1get/GetFypDetailsByTitle')
+      .then(res => res.json())
+      .then(users => {
+        alert(users[0].LeaderID);
 
         this.setState({
-            title: title,
-            fypID: users[0].FypID,
-            leaderID: users[0].LeaderID,
-            member1ID: users[0].Member1ID,
-            member2ID: users[0].Member2ID,
-            supervisor: users[0].SupervisorEmpID,
-            cosupervisor: users[0].CoSuperVisorID,
+          title: title,
+          fypID: users[0].FypID,
+          leaderID: users[0].LeaderID,
+          member1ID: users[0].Member1ID,
+          member2ID: users[0].Member2ID,
+          supervisor: users[0].SupervisorEmpID,
+          cosupervisor: users[0].CoSuperVisorID,
 
         })
 
-    })
+      })
   }
 
   renderTitle = () => {
@@ -238,9 +222,9 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
               selectedValue={this.state.title}
               style={{ height: 50, width: 100 }}
               onValueChange={(value) =>
-                 this.setData(value)
+                this.setData(value)
               }
-              >
+            >
               {this.state.fyps.map((item, key) => (
                 <Picker.Item key={key} label={item.title} value={item.title} />
               )
@@ -517,7 +501,7 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
               >
                 Supervisor ID : {this.state.supervisor}
               </Text>
-              
+
               <Text
                 p
                 style={{
@@ -800,7 +784,7 @@ const styles = StyleSheet.create({
   formInput: {
     borderBottomWidth: 1.5,
     fontSize: 16,
-    color:'black'
+    color: 'black'
   },
   input1: {
     borderWidth: 0,
