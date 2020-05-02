@@ -4,7 +4,7 @@ import { Block, Button, Text, theme } from 'galio-framework';
 
 const { height, width } = Dimensions.get('screen');
 import { Images, nowTheme } from '../constants/';
-import { Icon, Input} from '../components';
+import { Icon, Input } from '../components';
 import { AsyncStorage } from 'react-native';
 import {
 
@@ -20,6 +20,7 @@ export default class Onboarding extends React.Component {
 
   componentDidMount(){
     AsyncStorage.setItem('ip', '192.168.0.108:45455');
+
   }
 
   async onLogin() {
@@ -35,25 +36,26 @@ export default class Onboarding extends React.Component {
     //       console.warn(users[0]);
     //       if (users[0].Role == "Student") {
     //         AsyncStorage.setItem('email', email);
-            // AsyncStorage.setItem('ID', 163942);
-            // this.props.navigation.navigate('Student_Home');
-  //         }
-  //         else if (users[0].Role == "Teacher") {
-  //           AsyncStorage.setItem('email',email);
-  AsyncStorage.setItem('ID', 163942);
-            this.props.navigation.navigate('Student_Home');
-  //           AsyncStorage.setItem('name', users[0].Name);
-  // AsyncStorage.setItem('ID', 123);
-  //           this.props.navigation.navigate('Teacher_Home');
-  //         }
-  //         else {
-  //           AsyncStorage.setItem('email', email);
-  //           AsyncStorage.setItem('name', users[0].Name);
-  
-  //           this.props.navigation.navigate('External_Home');
-  //         }
-  //       }
-  //     })
+
+
+    // AsyncStorage.setItem('ID', '163963');
+    // this.props.navigation.navigate('Student_Home');
+    //         }
+    //         else if (users[0].Role == "Teacher") {
+    //           AsyncStorage.setItem('email',email);
+    //           AsyncStorage.setItem('name', users[0].Name);
+    // AsyncStorage.setItem('ID1', '6466');
+    // this.props.navigation.navigate('Teacher_Home');
+    //         }
+    //         else {
+    //           AsyncStorage.setItem('email', email);
+    //           AsyncStorage.setItem('name', users[0].Name);
+    AsyncStorage.setItem('ID1', 'ahsanshah23');
+    this.props.navigation.navigate('External_Home');
+    //         }
+    //       }
+    //     })
+
   }
 
   handleSubmitSignup = () => {

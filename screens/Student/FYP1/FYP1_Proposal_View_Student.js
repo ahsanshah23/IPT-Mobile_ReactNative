@@ -36,8 +36,10 @@ class FYP1_Proposal_View_Student extends React.Component {
     }
 
     async getdata() {
+
         let ip = await AsyncStorage.getItem('ip');
         fetch('http://'+ip+'/api/fyp1get/getproposaldetails')
+
             .then(res => res.json())
             .then(users => {
 

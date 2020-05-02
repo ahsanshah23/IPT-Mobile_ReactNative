@@ -35,6 +35,7 @@ class Register extends React.Component {
         const { username, password, name } = this.state;
         let ip = await AsyncStorage.getItem('ip');
         fetch('http://'+ip+'/api/fyp2post/RegisterJury', {
+
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

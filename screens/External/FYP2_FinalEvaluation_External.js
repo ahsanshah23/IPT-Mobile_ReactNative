@@ -10,10 +10,10 @@ import { Card, Button, Icon, Input } from "../../components";
 import { AsyncStorage } from 'react-native';
 
 
-class FYP2_FinalEvaluation_External extends React.Component {
+class FYP2_FinalEvaluation_Internal extends React.Component {
   state = {
     ischecked: false,
-    
+
   };
 
   constructor(props) {
@@ -21,26 +21,32 @@ class FYP2_FinalEvaluation_External extends React.Component {
     //Initial State
     this.state = {
       title: "",
-      member1Name: "",
-      mamber2Name: "",
-      member3Email: "",
-      member1Email: "",
-      member2Email: "",
-      member3Email: "",
-      supervisorEmail: "",
-      coSupervisorEmail: "",
-      member1Mark: "",
-      member2Mark: "",
-      member3Mark: "",
+
+      leaderID: "",
+
+      member1ID: "",
+
+      member2ID: "",
+
+      supervisorID: "",
+
+      coSupervisorID: "",
+
+      leaderMarks: "",
+
+      member1Marks: "",
+
+      member2Marks: "",
+
       tableData: [
-        ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+','C','C-','D+','D','F'],
-        ['90', '86', '82', '78','74','70','66','62','58','54','50', '<50']
+        ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F'],
+        ['90', '86', '82', '78', '74', '70', '66', '62', '58', '54', '50', '<50']
       ],
       evaluator: "",
       coevaluator: "",
-      fyps:[]
+      fyps: []
     };
-  } 
+  }
 
   componentDidMount() {
     this.getData();
@@ -49,17 +55,18 @@ class FYP2_FinalEvaluation_External extends React.Component {
   async getData() {
 
     const markers = [];
-    let ip = await AsyncStorage.getItem('ip');
+    // let ip = await AsyncStorage.getItem('ip');
+    let ID = await AsyncStorage.getItem('ID1');
 
-    await fetch('http://' + ip + ':3006/fypnames ')
+    await fetch('http://192.168.0.108:45459/api/FYP2Get/GetFypNamesExternalJury?username=' + ID + ' ')
       .then(res => res.json())
 
       .then(res => {
         res.map((element) => {
           const marketObj = {};
-          marketObj.id = element.id;
-          marketObj.title = element.title;
-          marketObj.leaderemail = element.leaderemail;
+          marketObj.id = element.FypID;
+          marketObj.title = element.ProjectName;
+          // marketObj.leaderemail = element.leaderemail;
 
           markers.push(marketObj);
         });
@@ -69,65 +76,94 @@ class FYP2_FinalEvaluation_External extends React.Component {
   }
 
   async setData(title) {
-    
+
     let ip = await AsyncStorage.getItem('ip');
 
-    await fetch('http://' + ip + ':3006/formfill_by_title?title='+title+' ')
-    .then(res => res.json())
-    .then(users => {
+    await fetch('http://192.168.0.108:45459/api/fyp1get/GetFypDetailsByTitle?title=' + title + ' ')
+      .then(res => res.json())
+      .then(users => {
 
         this.setState({
-            title: users[0].title, 
-            member1Email: users[0].leaderemail,
-            member2Email: users[0].member2email,
-            member3Email: users[0].member3email,
-            supervisorEmail: users[0].supervisor,
-            coSupervisorEmail: users[0].cosupervisor,
+          title: title,
+          fypID: users[0].FypID,
+          leaderID: users[0].LeaderID,
+          member1ID: users[0].Member1ID,
+          member2ID: users[0].Member2ID,
+          supervisorID: users[0].SupervisorEmpID,
+          coSupervisorID: users[0].CoSuperVisorID,
 
         })
 
-    })
+      })
   }
 
   async Submit() {
-    const { title, member1Email, member2Email, member3Email, member1Name, member2Name, Member3Name, supervisorEmail, coSupervisorEmail, member1Mark, member2Mark, member3Mark, evaluator, coevaluator } = this.state;
+    const { leaderID, member1ID, member2ID, leaderMarks, member1Marks, member2Marks } = this.state;
     let ip = await AsyncStorage.getItem('ip');
     let session_email = await AsyncStorage.getItem('email');
-    await fetch('http://'+ip+':3006/fyp2finalevaluationexternal_add?title=' + title + ' &member1Name=' + member1Name + '&member2Name=' + member2Name + 
-    ' &member3Name=' + Member3Name + ' &supervisorEmail=' + supervisorEmail + ' &coSupervisorEmail=' + coSupervisorEmail + ' &member1Email=' + member1Email +
-    ' &member1Mark=' + member1Mark + ' &member2Email=' + member2Email + ' &member2Mark=' + member2Mark + ' &member3Email=' + member3Email +
-    ' &member3Mark=' + member3Mark + ' &evaluator=' + evaluator + ' &coevaluator=' + coevaluator + ' &submitted_by=' + session_email + ' ')
-    .then(users => {
-      alert("inserted");
-      this.props.navigation.navigate('External_Home')
+
+    fetch('http://192.168.0.108:45459/api/fyp2post/AddFinalEvaluationJury', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+
+        "FormID": 5,
+        "LeaderID": leaderID,
+        "Member1ID": member1ID,
+        "Member2ID": member2ID,
+        "leaderMarks": leaderMarks,
+        "member1marks": member1Marks,
+        "member2marks": member2Marks
+
+
+      })
     })
+      .then((response) => response.json())
+
+      //If response is in json then in success
+      .then((responseJson) => {
+        //Success 
+        alert("Inserted Final Evaluation FYP II");
+        this.props.navigation.navigate('External_Home')
+      })
+      //If response is not in json then in error
+      .catch((error) => {
+        //Error 
+        alert("Error");
+        console.error(error);
+      });
+
+
   }
 
   renderGrading = () => {
     const state = this.state;
-      return ( <Block flex style={styles.group}>
-          <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-     <Text
-        p
-        style={{
-          marginTop: 20,
-          fontFamily: 'montserrat-regular',
-          marginBottom: theme.SIZES.BASE / 2,
-          marginTop: '2.5%'
-        }}
-        color={nowTheme.COLORS.HEADER}
-      >
-       Grading Scheme (For Reference)
+    return (<Block flex style={styles.group}>
+      <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+        <Text
+          p
+          style={{
+            marginTop: 20,
+            fontFamily: 'montserrat-regular',
+            marginBottom: theme.SIZES.BASE / 2,
+            marginTop: '2.5%'
+          }}
+          color={nowTheme.COLORS.HEADER}
+        >
+          Grading Scheme (For Reference)
       </Text>
-      <Block style={styles.container}>
-        <Table borderStyle={{borderWidth: 2, borderColor: '#c8e1ff'}}>
-          
-          <Rows data={state.tableData} textStyle={styles.text}/>
-        </Table>
+        <Block style={styles.container}>
+          <Table borderStyle={{ borderWidth: 2, borderColor: '#c8e1ff' }}>
+
+            <Rows data={state.tableData} textStyle={styles.text} />
+          </Table>
+        </Block>
       </Block>
-      </Block>
-      </Block>
-      );
+    </Block>
+    );
   };
 
   renderHeading = () => {
@@ -152,7 +188,7 @@ class FYP2_FinalEvaluation_External extends React.Component {
             }}
             color={nowTheme.COLORS.HEADER}
           >
-            Jury Evaluation Form
+            External Jury Evaluation Form
           </Text>
           <Text
             h4
@@ -191,9 +227,9 @@ class FYP2_FinalEvaluation_External extends React.Component {
               selectedValue={this.state.title}
               style={{ height: 50, width: 100 }}
               onValueChange={(value) =>
-                 this.setData(value)
+                this.setData(value)
               }
-              >
+            >
               {this.state.fyps.map((item, key) => (
                 <Picker.Item key={key} label={item.title} value={item.title} />
               )
@@ -210,8 +246,8 @@ class FYP2_FinalEvaluation_External extends React.Component {
     );
   };
 
-  
-  renderTeam = () => {
+
+  renderadvisors = () => {
     return (
       <Block flex style={styles.group}>
         <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
@@ -223,93 +259,7 @@ class FYP2_FinalEvaluation_External extends React.Component {
             }}
             color={nowTheme.COLORS.HEADER}
           >
-            Team Members
-          </Text>
-          <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-            <Block style={{ flexDirection: 'column' }}>
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Member 1 : (Leader)
-              </Text>
-              <Block style={{ flexDirection: 'column' }}>
-
-              <FloatingLabel
-                inputStyle={styles.input1}
-                style={styles.formInput}
-                onChangeText={(member1Name) => this.setState({ member1Name })}
-                placeholder="Name"
-              >
-              </FloatingLabel>
-              </Block>
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Member 2 :
-              </Text>
-              <Block style={{ flexDirection: 'column' }}>
-
-              <FloatingLabel
-                inputStyle={styles.input1}
-                style={styles.formInput}
-                onChangeText={(member2Name) => this.setState({ member2Name })}
-                placeholder="Name"
-              >
-              </FloatingLabel>
-              </Block>
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Member 3 :
-              </Text>
-              <Block style={{ flexDirection: 'column' }}>
-
-              <FloatingLabel
-                inputStyle={styles.input1}
-                style={styles.formInput}
-                onChangeText={(member3Name) => this.setState({ member3Name })}
-                placeholder="Name"
-              >
-              </FloatingLabel>
-              </Block>
-            </Block>
-          </Block>
-        </Block>
-      </Block>
-    );
-  };
-
-  renderadvisors = () => {
-    return (
-      <Block flex style={styles.group}>
-        <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-        <Text
-            h5
-            style={{
-              fontFamily: 'montserrat-regular',
-              marginBottom: theme.SIZES.BASE / 2
-            }}
-            color={nowTheme.COLORS.HEADER}
-          >
-            Supervisor(s):
+            Supervisor(s)
           </Text>
 
           <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
@@ -323,16 +273,9 @@ class FYP2_FinalEvaluation_External extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Advisor :
+                Supervisor : {this.state.supervisorID}
               </Text>
-              <Block style={{ flexDirection: 'column' }}>
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  value={this.state.supervisorEmail}
-                >
-                </FloatingLabel>
-              </Block>
+
               <Text
                 p
                 style={{
@@ -342,16 +285,9 @@ class FYP2_FinalEvaluation_External extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Co-supervisor(s) (if any) :
+                Co-supervisor(s) (if any) : {this.state.coSupervisorID}
               </Text>
-              <Block style={{ flexDirection: 'column' }}>
-              <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  value={this.state.coSupervisorEmail}
-                >
-                </FloatingLabel>
-              </Block>
+
             </Block>
           </Block>
         </Block>
@@ -369,7 +305,7 @@ class FYP2_FinalEvaluation_External extends React.Component {
               marginTop: 20,
               fontFamily: 'montserrat-regular',
               marginBottom: theme.SIZES.BASE / 2,
-              fontSize:16
+              fontSize: 16
             }}
             color={nowTheme.COLORS.HEADER}
           >
@@ -383,7 +319,7 @@ class FYP2_FinalEvaluation_External extends React.Component {
               marginTop: 10,
               fontFamily: 'montserrat-regular',
               marginBottom: theme.SIZES.BASE / 2,
-              fontSize:16
+              fontSize: 16
             }}
             color={nowTheme.COLORS.HEADER}
           >
@@ -398,7 +334,7 @@ class FYP2_FinalEvaluation_External extends React.Component {
               marginTop: 10,
               fontFamily: 'montserrat-regular',
               marginBottom: theme.SIZES.BASE / 2,
-              fontSize:16
+              fontSize: 16
             }}
             color={nowTheme.COLORS.HEADER}
           >
@@ -413,7 +349,7 @@ class FYP2_FinalEvaluation_External extends React.Component {
               marginTop: 10,
               fontFamily: 'montserrat-regular',
               marginBottom: theme.SIZES.BASE / 2,
-              fontSize:16
+              fontSize: 16
             }}
             color={nowTheme.COLORS.HEADER}
           >
@@ -428,7 +364,7 @@ class FYP2_FinalEvaluation_External extends React.Component {
               marginTop: 10,
               fontFamily: 'montserrat-regular',
               marginBottom: theme.SIZES.BASE / 2,
-              fontSize:16
+              fontSize: 16
             }}
             color={nowTheme.COLORS.HEADER}
           >
@@ -443,7 +379,7 @@ class FYP2_FinalEvaluation_External extends React.Component {
               marginTop: 10,
               fontFamily: 'montserrat-regular',
               marginBottom: theme.SIZES.BASE / 2,
-              fontSize:16
+              fontSize: 16
             }}
             color={nowTheme.COLORS.HEADER}
           >
@@ -481,31 +417,26 @@ class FYP2_FinalEvaluation_External extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Member #1:
+                Leader ID : {this.state.leaderID}
               </Text>
               <Block style={{ flexDirection: 'column' }}>
 
-              <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  value={this.state.member1Email}
-                >
-                </FloatingLabel>
+
                 <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Suggested Marks out of 100:
+                  p
+                  style={{
+                    fontFamily: 'montserrat-regular',
+                    marginBottom: theme.SIZES.BASE / 2,
+                    marginTop: '2.5%'
+                  }}
+                  color={nowTheme.COLORS.HEADER}
+                >
+                  Suggested Marks out of 100:
               </Text>
-              <FloatingLabel
+                <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  onChangeText={(member1Mark) => this.setState({ member1Mark })}
+                  onChangeText={(leaderMarks) => this.setState({ leaderMarks })}
                   placeholder="Marks"
                 >
                 </FloatingLabel>
@@ -521,32 +452,27 @@ class FYP2_FinalEvaluation_External extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Member #2:
+                Member 1 ID : {this.state.member1ID}
               </Text>
               <Block style={{ flexDirection: 'column' }}>
 
-              <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  value={this.state.member2Email}
-                >
-                </FloatingLabel>
+
                 <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Suggested Marks out of 100:
+                  p
+                  style={{
+                    fontFamily: 'montserrat-regular',
+                    marginBottom: theme.SIZES.BASE / 2,
+                    marginTop: '2.5%'
+                  }}
+                  color={nowTheme.COLORS.HEADER}
+                >
+                  Suggested Marks out of 100:
               </Text>
 
-              <FloatingLabel
+                <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  onChangeText={(member2Mark) => this.setState({ member2Mark })}
+                  onChangeText={(member1Marks) => this.setState({ member1Marks })}
                   placeholder="Marks"
                 >
                 </FloatingLabel>
@@ -561,36 +487,32 @@ class FYP2_FinalEvaluation_External extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Member #3:
+                Member 2 ID : {this.state.member2ID}
               </Text>
               <Block style={{ flexDirection: 'column' }}>
 
-              <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  value={this.state.member3Email}
-                >
-                </FloatingLabel>
+
                 <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Suggested Marks out of 100:
+                  p
+                  style={{
+                    fontFamily: 'montserrat-regular',
+                    marginBottom: theme.SIZES.BASE / 2,
+                    marginTop: '2.5%'
+                  }}
+                  color={nowTheme.COLORS.HEADER}
+                >
+                  Suggested Marks out of 100:
               </Text>
-              <FloatingLabel
+
+                <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  onChangeText={(member3Mark) => this.setState({ member3Mark })}
+                  onChangeText={(member2Marks) => this.setState({ member2Marks })}
                   placeholder="Marks"
                 >
                 </FloatingLabel>
               </Block>
-               
+
             </Block>
           </Block>
         </Block>
@@ -598,72 +520,7 @@ class FYP2_FinalEvaluation_External extends React.Component {
     );
   };
 
-  renderJury = () => {
-    return (
-      <Block flex style={styles.group}>
-        <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-          <Text
-            h5
-            style={{
-              marginTop: 20,
-              fontFamily: 'montserrat-regular',
-              marginBottom: theme.SIZES.BASE / 2
-            }}
-            color={nowTheme.COLORS.HEADER}
-          >
-            Evaluators:
-          </Text>
-          <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-            <Block style={{ flexDirection: 'column' }}>
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Evaluator's Email:
-              </Text>
-              <Block style={{ flexDirection: 'column' }}>
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(evaluator) => this.setState({ evaluator })}
-                  placeholder="Email"
-                >
-                </FloatingLabel>
-              </Block>
 
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Co-Evaluator's Email:
-              </Text>
-              <Block style={{ flexDirection: 'column' }}>
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(coevaluator) => this.setState({ coevaluator })}
-                  placeholder="Email"
-                >
-                </FloatingLabel>
-              </Block>
-
-          
-            </Block>
-          </Block>
-        </Block>
-      </Block>
-    );
-  };
 
 
   render() {
@@ -679,7 +536,6 @@ class FYP2_FinalEvaluation_External extends React.Component {
           {this.renderrules()}
           {this.renderMarks()}
           {this.renderGrading()}
-          {this.renderJury()}
 
           <Block style={{ flex: 0.33, flexDirection: 'row', marginTop: theme.SIZES.BASE, justifyContent: 'center', alignItems: 'center' }}>
             <Button
@@ -687,7 +543,7 @@ class FYP2_FinalEvaluation_External extends React.Component {
               style={styles.button}
               color={nowTheme.COLORS.PRIMARY}
               onPress={this.Submit.bind(this)}
-              
+
             >
               <Text
                 style={{ fontFamily: 'montserrat-bold', fontSize: 14 }}
@@ -697,13 +553,14 @@ class FYP2_FinalEvaluation_External extends React.Component {
               </Text>
             </Button>
           </Block>
-         
+
         </ScrollView>
       </Block>
     );
   }
 
 }
+
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: theme.SIZES.BASE
@@ -714,7 +571,7 @@ const styles = StyleSheet.create({
     marginTop: 44,
     color: nowTheme.COLORS.HEADER
   },
-  button:{
+  button: {
     backgroundColor: "orange",
     color: "white"
   },
@@ -728,4 +585,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default FYP2_FinalEvaluation_External;
+export default FYP2_FinalEvaluation_Internal;
