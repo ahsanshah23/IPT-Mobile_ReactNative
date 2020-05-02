@@ -40,6 +40,8 @@ export default class Onboarding extends React.Component {
   //         }
   //         else if (users[0].Role == "Teacher") {
   //           AsyncStorage.setItem('email',email);
+  AsyncStorage.setItem('ID', 163942);
+            this.props.navigation.navigate('Teacher_Home');
   //           AsyncStorage.setItem('name', users[0].Name);
   AsyncStorage.setItem('ID', 123);
             this.props.navigation.navigate('Teacher_Home');
