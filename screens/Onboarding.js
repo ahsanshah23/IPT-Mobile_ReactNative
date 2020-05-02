@@ -35,6 +35,7 @@ export default class Onboarding extends React.Component {
     //       console.warn(users[0]);
     //       if (users[0].Role == "Student") {
     //         AsyncStorage.setItem('email', email);
+
     // AsyncStorage.setItem('ID', '163963');
     // this.props.navigation.navigate('Student_Home');
     //         }
@@ -52,6 +53,7 @@ export default class Onboarding extends React.Component {
     //         }
     //       }
     //     })
+
   }
 
   handleSubmitSignup = () => {
