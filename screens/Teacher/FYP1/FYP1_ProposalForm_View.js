@@ -14,39 +14,86 @@ class FYP1_ProposalForm_View extends React.Component {
         super(props);
         //Initial State
         this.state = {
+            // title: "",
+            // type: "",
+            // areaofinterest: "HCI",
+            // abstract: "",
+            // leadername: "",
+            // leaderemail: "",
+            // member2name: "",
+            // member2email: "",
+            // member3name: "",
+            // member3email: "",
+            // supervisor: "",
+            // cosupervisor: "",
+            // comment: "",
+            // status: "",
+            // ButtonSubmit:true,
+            // warning:""
+
             title: "",
             type: "",
-            areaofinterest: "HCI",
+            proposalID:"",
             abstract: "",
-            leadername: "",
-            leaderemail: "",
-            member2name: "",
-            member2email: "",
-            member3name: "",
-            member3email: "",
+            leaderID: "",
+            member1ID: "",
+            member2ID: "",
             supervisor: "",
             cosupervisor: "",
             comment: "",
-            status: "",
-            ButtonSubmit:true,
-            warning:""
+            status: ""
 
         };
     }
 
     async Submit() {
-        const { status, comment, leaderemail, member2email, member3email, supervisor, cosupervisor, title } = this.state;
-        let ip = await AsyncStorage.getItem('ip');
-        await fetch('http://'+ip+':3006/fyp1proposal_update?status='+status+'&comment='+comment+'&title='+title+'&leaderemail='+leaderemail+'&member2email='+member2email+'&member3email='+member3email+'&supervisor='+supervisor+'&cosupervisor='+cosupervisor+' ')
-          .then(users => {
-            alert("updated");
-            this.props.navigation.navigate('Teacher_Home')
-          })  
+        const { proposalID, abstract, status, comment, leaderID, member1ID, member2ID, supervisor, cosupervisor, title, type } = this.state;
+        // let ip = await AsyncStorage.getItem('ip');
+
+        fetch('http://192.168.0.109:45455/api/fyp1post/updateproposalsupervisor', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "ProposalID": proposalID,
+        "ProjectTitle": title,
+        "ProjectType": type,
+        "Abstract": abstract, 
+        "SupervisorID": supervisor,
+        "CoSupervisorID": cosupervisor,
+        "LeaderID": leaderID,
+        "Member1ID": member1ID,
+        "Member2ID": member2ID,
+        "Status": status,
+        "Comment": comment
+      })
+    })
+      .then((response) => response.json())
+        alert("Inserted");
+        this.props.navigation.navigate('Student_Home')
+      //If response is in json then in success
+      .then((responseJson) => {
+        //Success 
+        console.log(responseJson);
+      })
+      //If response is not in json then in error
+      .catch((error) => {
+        //Error 
+        alert("Error");
+        console.error(error);
+      });
+
+        //  .then(users => {
+        //     alert("updated");
+        //     this.props.navigation.navigate('Teacher_Home')
+        //   })  
     }
 
     componentDidMount() {
         this.getdata();
-        this.getstatus()
+        // this.getstatus()
         
     }
 
@@ -78,26 +125,31 @@ class FYP1_ProposalForm_View extends React.Component {
     async getdata()
     {
         // alert("hi");
-        let ip = await AsyncStorage.getItem('ip');
+        // let ip = await AsyncStorage.getItem('ip');
         let leader = await AsyncStorage.getItem('leader');
         // alert(leader);
         
-        fetch('http://'+ip+':3006/fyp1proposal_view?leader='+leader+'')
+        fetch('http://192.168.0.109:45455/api/fyp1get/GetProposalDetails')
             .then(res => res.json())
             .then(users => {
                 this.setState({
-                    title: users[0].project_title,
-                    type: users[0].project_type,
-                    areaofinterest: users[0].area_of_interest,
-                    abstract: users[0].abstract,
-                    leaderemail: users[0].leader_email,
-                    leadername: users[0].leader_name,
-                    member2email: users[0].member2_email,
-                    member2name: users[0].member2_name,
-                    member3email: users[0].member3_email,
-                    member3name: users[0].member3_name,
-                    supervisor: users[0].supervisor,
-                    cosupervisor: users[0].cosupervisor
+                    proposalID: users[0].ProposalID,
+
+                    title: users[0].ProjectTitle,
+
+                    type: users[0].ProjectType,
+
+                    abstract: users[0].Abstract,
+
+                    leaderID: users[0].LeaderID,
+
+                    member1ID: users[0].Member1ID,
+
+                    member2ID: users[0].Member2ID,
+
+                    supervisor: users[0].SupervisorID,
+
+                    cosupervisor: users[0].CoSupervisorID
                 })
                 // console.warn(this.state.title);
             })
@@ -181,45 +233,6 @@ class FYP1_ProposalForm_View extends React.Component {
         );
     };
 
-    renderInterest = () => {
-        const { areaofinterest } = this.state;
-        return (
-            <Block flex style={styles.group}>
-                <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-                    <Text
-                        h5
-                        style={{
-                            fontFamily: 'montserrat-regular',
-                            marginBottom: theme.SIZES.BASE / 2,
-                            fontWeight: '500'
-                        }}
-                        color={nowTheme.COLORS.HEADER}
-                    >
-                        Area of interest(s)
-                    </Text>
-                    <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-                        <Block style={{ flexDirection: 'column' }}>
-
-                            <Text
-                                p
-                                style={{
-                                    fontFamily: 'montserrat-regular',
-                                    marginBottom: theme.SIZES.BASE / 2,
-                                    marginTop: '2.5%',
-                                }}
-                                color={nowTheme.COLORS.HEADER}
-                            >
-                                {areaofinterest}
-                            </Text>
-
-                        </Block>
-                    </Block>
-                </Block>
-            </Block>
-        );
-
-    };
-
     renderAbstract = () => {
         const { abstract } = this.state;
         return (
@@ -258,7 +271,7 @@ class FYP1_ProposalForm_View extends React.Component {
     };
 
     renderTeam = () => {
-        const { leaderemail, leadername, member2email, member2name, member3email, member3name } = this.state;
+        const { leaderID, member1ID, member2ID, member2name, member3email, member3name } = this.state;
         return (
             <Block flex style={styles.group}>
                 <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
@@ -285,22 +298,9 @@ class FYP1_ProposalForm_View extends React.Component {
                                 }}
                                 color={nowTheme.COLORS.HEADER}
                             >
-                                Member 1 : (Leader)
+                                Leader ID :
                             </Text>
                             <Block style={{ flexDirection: 'column' }}>
-
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 12
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Name: {leadername}
-                                </Text>
 
                                 <Text
                                     p
@@ -313,7 +313,7 @@ class FYP1_ProposalForm_View extends React.Component {
                                     }}
                                     color={nowTheme.COLORS.HEADER}
                                 >
-                                    Roll Number: {leaderemail}
+                                    Roll Number: {leaderID}
                                 </Text>
 
                             </Block>
@@ -327,22 +327,10 @@ class FYP1_ProposalForm_View extends React.Component {
                                 }}
                                 color={nowTheme.COLORS.HEADER}
                             >
-                                Member 2 :
+                                Member 1 ID :
                             </Text>
                             <Block style={{ flexDirection: 'column' }}>
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 12
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Name: {member2name}
-                                </Text>
-
+                             
                                 <Text
                                     p
                                     style={{
@@ -354,7 +342,7 @@ class FYP1_ProposalForm_View extends React.Component {
                                     }}
                                     color={nowTheme.COLORS.HEADER}
                                 >
-                                    Roll Number: {member2email}
+                                    Roll Number: {member1ID}
                                 </Text>
 
                             </Block>
@@ -368,21 +356,10 @@ class FYP1_ProposalForm_View extends React.Component {
                                 }}
                                 color={nowTheme.COLORS.HEADER}
                             >
-                                Member 3 :
+                                Member 2 ID :
                             </Text>
                             <Block style={{ flexDirection: 'column' }}>
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 12
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Name: {member3name}
-                                </Text>
+                               
 
                                 <Text
                                     p
@@ -395,7 +372,7 @@ class FYP1_ProposalForm_View extends React.Component {
                                     }}
                                     color={nowTheme.COLORS.HEADER}
                                 >
-                                    Roll Number: {member3email}
+                                    Roll Number: {member2ID}
                                 </Text>
                             </Block>
                         </Block>
@@ -550,7 +527,6 @@ class FYP1_ProposalForm_View extends React.Component {
                     <Card style={styles.card}>
                         {this.renderHeading()}
                         {this.renderTitle()}
-                        {this.renderInterest()}
                         {this.renderAbstract()}
                         {this.renderTeam()}
                         {this.renderEnd()}

@@ -17,7 +17,7 @@ class FYP1_Proposal_View_Student extends React.Component {
         this.state = {
             title: "",
             type: "",
-
+            
             abstract: "",
             leaderID: "",
             member1ID: "",

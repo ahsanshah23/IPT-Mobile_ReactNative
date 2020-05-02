@@ -30,15 +30,15 @@ class FYP1_Proposal_List extends React.Component {
         let ip = await AsyncStorage.getItem('ip');
         let session_email = await AsyncStorage.getItem('email');
 
-        await fetch('http://' + ip + ':3006/fyp1proposal_list?Email=' + session_email + ' ')
+        await fetch('http://192.168.0.109:45455/api/fyp1get/GetProposalsNameSupervisor')
             .then(res => res.json())
 
             .then(res => {
                 res.map((element) => {
                     const marketObj = {};
-                    marketObj.id = element.id;
-                    marketObj.title = element.title;
-                    marketObj.leader_email = element.leader_email;
+                   
+                    marketObj.title = element.ProjectTitle;
+                    marketObj.leader_email = element.LeaderID;
 
                     markers.push(marketObj);
                 });
@@ -66,10 +66,7 @@ class FYP1_Proposal_List extends React.Component {
                                 <Image style={styles.icon} source={{ uri: "https://img.icons8.com/ios/40/000000/settings.png" }} />
                             </View>
 
-                            <View style={styles.cardFooter}>
-                                <Text key={key} style={styles.subTitle}>Proposal ID: {item.id}</Text>
-
-                            </View>
+                          
                             <View style={styles.cardFooter}>
 
                                 <Text key={key} style={styles.subTitle}>Leader email: {item.leader_email}</Text>

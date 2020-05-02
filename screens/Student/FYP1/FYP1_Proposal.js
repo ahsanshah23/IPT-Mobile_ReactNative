@@ -56,7 +56,7 @@ class FYP1_Proposal extends React.Component {
       body: JSON.stringify({
         "ProjectTitle": title,
         "ProjectType": type,
-        "Abstract": abstract,
+        "Abstract": abstract, 
         "SupervisorID": supervisor,
         "CoSupervisorID": cosupervisor,
         "LeaderID": leaderID,
