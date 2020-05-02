@@ -35,17 +35,19 @@ export default class Onboarding extends React.Component {
     //       console.warn(users[0]);
     //       if (users[0].Role == "Student") {
     //         AsyncStorage.setItem('email', email);
-            AsyncStorage.setItem('ID', 163942);
-            this.props.navigation.navigate('Student_Home');
+            // AsyncStorage.setItem('ID', 163942);
+            // this.props.navigation.navigate('Student_Home');
   //         }
   //         else if (users[0].Role == "Teacher") {
   //           AsyncStorage.setItem('email',email);
   //           AsyncStorage.setItem('name', users[0].Name);
-  //           this.props.navigation.navigate('Teacher_Home');
+  AsyncStorage.setItem('ID', 123);
+            this.props.navigation.navigate('Teacher_Home');
   //         }
   //         else {
   //           AsyncStorage.setItem('email', email);
   //           AsyncStorage.setItem('name', users[0].Name);
+  
   //           this.props.navigation.navigate('External_Home');
   //         }
   //       }
