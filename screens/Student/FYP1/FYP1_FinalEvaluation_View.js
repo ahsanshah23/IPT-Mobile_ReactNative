@@ -13,31 +13,20 @@ class FYP1_FinalEvaluation_View extends React.Component {
         //Initial State
         this.state = {
             title: "",
-            leadername: "",
-            member2name: "",
-            member3name: "",
+            leaderID: "",
+            member1ID: "",
+            member2ID: "",
             supervisor: "",
             cosupervisor: "",
-            deliverable1detail: "",
             deliverable1completed: "",
-            deliverable2detail: "",
             deliverable2completed: "",
-            deliverable3detail: "",
             deliverable3completed: "",
-            deliverable4detail: "",
             deliverable4completed: "",
-            deliverable5detail: "",
             deliverable5completed: "",
             fyp2deliverables: "",
-            leaderemail: "",
             leadermarks: "",
-            member2email: "",
+            member1marks: "",
             member2marks: "",
-            member3email: "",
-            member3marks: "",
-            evaluator: "",
-            coevaluator: ""
-
         };
     }
 
@@ -47,50 +36,32 @@ class FYP1_FinalEvaluation_View extends React.Component {
     }
 
     async getdata() {
+        
+        let ID1 = await AsyncStorage.getItem('ID');
+        alert(ID1);
         let ip = await AsyncStorage.getItem('ip');
         let session_email = await AsyncStorage.getItem('email');
-        fetch('http://' + ip + ':3006/fyp1finalevaluation_view?Email='+session_email+'')
+        fetch('http://192.168.1.4:45455/api/fyp1get/GetFinalEvaluations?id='+ID1+'')
             .then(res => res.json())
             .then(users => {
-
                 this.setState({
-                    title: users[0].Project_title,
-                    leaderemail: users[0].leader_email,
-                    leadername: users[0].leader_name,
-                    member2email: users[0].member2_email,
-                    member2name: users[0].member2_name,
-                    member3email: users[0].member3_email,
-                    member3name: users[0].member3_name,
-                    supervisor: users[0].supervisor_email,
-                    cosupervisor: users[0].cosupervisor_email,
-
-                    deliverable1detail: users[0].Deliverable1_Name,
-                    deliverable2detail: users[0].Deliverable2_Name,
-                    deliverable3detail: users[0].Deliverable3_Name,
-                    deliverable4detail: users[0].Deliverable4_Name,
-                    deliverable5detail: users[0].Deliverable5_Name,
-
-                    deliverable1completed: users[0].Deliverable1_Completed,
-                    deliverable2completed: users[0].Deliverable2_Completed,
-                    deliverable3completed: users[0].Deliverable3_Completed,
-                    deliverable4completed: users[0].Deliverable4_Completed,
-                    deliverable5completed: users[0].Deliverable5_Completed,
-
-                    fyp2deliverables: users[0].FYP2_Deliverables,
-
-                    leadermarks: users[0].Member1_Marks,
-                    member2marks: users[0].Member2_Marks,
-                    member3marks: users[0].Member3_Marks,
-
-                    evaluator: users[0].Jury1_Name,
-                    coevaluator: users[0].Jury2_Name,
-
-
+                    title: users[0].ProjectName,
+                    leaderID: users[0].LeaderID,
+                    member1ID: users[0].Member1ID,
+                    member2ID: users[0].Member2ID,
+                    supervisor: users[0].SuperVisorEmpID,
+                    cosupervisor: users[0].CoSuperVisorID,
+                    deliverable1completed: users[0].Deliverable1Completion,
+                    deliverable2completed: users[0].Deliverable2Completion,
+                    deliverable3completed: users[0].Deliverable3Completion,
+                    deliverable4completed: users[0].Deliverable4Completion,
+                    deliverable5completed: users[0].Deliverable5Completion,
+                    fyp2deliverables: users[0].Fyp2Deliverables,
+                    // leadermarks: users[0].Member1_Marks,
+                    // member2marks: users[0].Member2_Marks,
+                    // member3marks: users[0].Member3_Marks,
                 })
-
             })
-
-
     }
 
 
@@ -134,7 +105,6 @@ class FYP1_FinalEvaluation_View extends React.Component {
     };
 
     renderTitle = () => {
-        // const { checked } = this.state;
 
         return (
             <Block flex style={styles.group}>
@@ -151,10 +121,6 @@ class FYP1_FinalEvaluation_View extends React.Component {
                     >
                         Project Title : {this.state.title}
                     </Text>
-
-
-
-
                 </Block>
             </Block>
         );
@@ -194,7 +160,7 @@ class FYP1_FinalEvaluation_View extends React.Component {
     };
 
     renderTeam = () => {
-        const { leaderemail, leadername, member2email, member2name, member3email, member3name } = this.state;
+        const { leaderID, member1ID, member2ID } = this.state;
         return (
             <Block flex style={styles.group}>
                 <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
@@ -221,27 +187,8 @@ class FYP1_FinalEvaluation_View extends React.Component {
                                 }}
                                 color={nowTheme.COLORS.HEADER}
                             >
-                                Member 1 : (Leader)
+                                Leader ID : {leaderID}
                         </Text>
-                            <Block style={{ flexDirection: 'column' }}>
-
-                               
-
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16,
-
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Email: {leaderemail}
-                                </Text>
-
-                            </Block>
                             <Text
                                 p
                                 style={{
@@ -252,26 +199,9 @@ class FYP1_FinalEvaluation_View extends React.Component {
                                 }}
                                 color={nowTheme.COLORS.HEADER}
                             >
-                                Member 2 :
+                                Member 2 ID : {member1ID}
                         </Text>
-                            <Block style={{ flexDirection: 'column' }}>
-                               
-
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16,
-
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Email: {member2email}
-                                </Text>
-
-                            </Block>
+                            
                             <Text
                                 p
                                 style={{
@@ -282,24 +212,8 @@ class FYP1_FinalEvaluation_View extends React.Component {
                                 }}
                                 color={nowTheme.COLORS.HEADER}
                             >
-                                Member 3 :
-                        </Text>
-                            <Block style={{ flexDirection: 'column' }}>
-                               
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16,
-
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Email: {member3email}
-                                </Text>
-                            </Block>
+                                Member 3 ID : {member2ID}
+                            </Text>
                         </Block>
                     </Block>
                 </Block>
@@ -361,102 +275,6 @@ class FYP1_FinalEvaluation_View extends React.Component {
         );
     };
 
-    renderrules = () => {
-        return (
-            <Block flex style={styles.group}>
-                <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-                    <Text
-                        h5
-                        style={{
-                            marginTop: 20,
-                            fontFamily: 'montserrat-regular',
-                            marginBottom: theme.SIZES.BASE / 2,
-                            fontSize:16
-                        }}
-                        color={nowTheme.COLORS.HEADER}
-                    >
-                        Please evaluate group members individually by considering the evaluation criteria provided below. Give final marks out of 100 in the section provided overleaf
-
-          </Text>
-
-                    <Text
-                        h5
-                        style={{
-                            marginTop: 10,
-                            fontFamily: 'montserrat-regular',
-                            marginBottom: theme.SIZES.BASE / 2,
-                            fontSize:16
-                        }}
-                        color={nowTheme.COLORS.HEADER}
-                    >
-
-                        1. Does the group follow a well-defined software development methodology? Can students justify the use of the chosen software developement methodology?
-
-          </Text>
-
-                    <Text
-                        h5
-                        style={{
-                            marginTop: 10,
-                            fontFamily: 'montserrat-regular',
-                            marginBottom: theme.SIZES.BASE / 2,
-                            fontSize:16
-                        }}
-                        color={nowTheme.COLORS.HEADER}
-                    >
-
-                        2. Have the students adapted the given documenttemplates correctly according to their project requirements?
-
-          </Text>
-
-                    <Text
-                        h5
-                        style={{
-                            marginTop: 10,
-                            fontFamily: 'montserrat-regular',
-                            marginBottom: theme.SIZES.BASE / 2,
-                            fontSize:16
-                        }}
-                        color={nowTheme.COLORS.HEADER}
-                    >
-
-                        3. How well each member knows about software product's user requirements, and production use?
-
-          </Text>
-
-                    <Text
-                        h5
-                        style={{
-                            marginTop: 10,
-                            fontFamily: 'montserrat-regular',
-                            marginBottom: theme.SIZES.BASE / 2,
-                            fontSize:16
-                        }}
-                        color={nowTheme.COLORS.HEADER}
-                    >
-
-                        4. Knowledge of appropriate software tools, libraries and frameworks for implementation. For example: UI, Analysis, Visualization of data, IDE selected for coding, Database (SQL/NoSQL), livraries, etc.
-
-          </Text>
-
-                    <Text
-                        h5
-                        style={{
-                            marginTop: 10,
-                            fontFamily: 'montserrat-regular',
-                            marginBottom: theme.SIZES.BASE / 2,
-                            fontSize:16
-                        }}
-                        color={nowTheme.COLORS.HEADER}
-                    >
-
-                        5. Developement of UI and justification of UI/UX aspects, structure of code and/or hardware components. Use of OOP and coding practices
-          </Text>
-                </Block>
-            </Block>
-        );
-    };
-
     renderDeliverables = () => {
         return (
             <Block flex style={styles.group}>
@@ -486,22 +304,8 @@ class FYP1_FinalEvaluation_View extends React.Component {
                                 color={nowTheme.COLORS.HEADER}
                             >
                                 Deliverable #1:
-              </Text>
+                            </Text>
                             <Block style={{ flexDirection: 'column' }}>
-
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Detail: {this.state.deliverable1detail}
-                                </Text>
-
                                 <Text
                                     p
                                     style={{
@@ -529,20 +333,6 @@ class FYP1_FinalEvaluation_View extends React.Component {
                                 Deliverable  #2:
               </Text>
                             <Block style={{ flexDirection: 'column' }}>
-
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Detail: {this.state.deliverable2detail}
-                                </Text>
-
                                 <Text
                                     p
                                     style={{
@@ -570,20 +360,6 @@ class FYP1_FinalEvaluation_View extends React.Component {
                                 Deliverable  #3:
               </Text>
                             <Block style={{ flexDirection: 'column' }}>
-
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Detail: {this.state.deliverable3detail}
-                                </Text>
-
                                 <Text
                                     p
                                     style={{
@@ -612,20 +388,6 @@ class FYP1_FinalEvaluation_View extends React.Component {
                                 Deliverable  #4:
               </Text>
                             <Block style={{ flexDirection: 'column' }}>
-
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Detail: {this.state.deliverable4detail}
-                                </Text>
-
                                 <Text
                                     p
                                     style={{
@@ -652,22 +414,8 @@ class FYP1_FinalEvaluation_View extends React.Component {
                                 color={nowTheme.COLORS.HEADER}
                             >
                                 Deliverable  #5:
-              </Text>
+                            </Text>
                             <Block style={{ flexDirection: 'column' }}>
-
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Detail: {this.state.deliverab5e1detail}
-                                </Text>
-
                                 <Text
                                     p
                                     style={{
@@ -682,8 +430,6 @@ class FYP1_FinalEvaluation_View extends React.Component {
                                     Marks: {this.state.deliverable5completed}
                                 </Text>
                             </Block>
-
-
                         </Block>
                     </Block>
                 </Block>
@@ -733,7 +479,7 @@ class FYP1_FinalEvaluation_View extends React.Component {
                                     }}
                                     color={nowTheme.COLORS.HEADER}
                                 >
-                                    Email: {this.state.leaderemail}
+                                    ID: {this.state.leaderID}
                                 </Text>
 
                                 <Text
@@ -762,6 +508,48 @@ class FYP1_FinalEvaluation_View extends React.Component {
                                 }}
                                 color={nowTheme.COLORS.HEADER}
                             >
+                                Member #1:
+              </Text>
+                            <Block style={{ flexDirection: 'column' }}>
+
+                                <Text
+                                    p
+                                    style={{
+                                        fontFamily: 'montserrat-regular',
+                                        marginBottom: theme.SIZES.BASE / 2,
+                                        marginTop: '2.5%',
+                                        fontSize: 16
+                                    }}
+                                    color={nowTheme.COLORS.HEADER}
+                                >
+                                    ID: {this.state.member1ID}
+                                </Text>
+
+                                <Text
+                                    p
+                                    style={{
+                                        fontFamily: 'montserrat-regular',
+                                        marginBottom: theme.SIZES.BASE / 2,
+                                        marginTop: '2.5%',
+                                        fontSize: 16,
+
+                                    }}
+                                    color={nowTheme.COLORS.HEADER}
+                                >
+                                    Marks: {this.state.member1marks}
+                                </Text>
+                            </Block>
+
+                            <Text
+                                p
+                                style={{
+                                    fontFamily: 'montserrat-regular',
+                                    marginBottom: theme.SIZES.BASE / 2,
+                                    marginTop: '2.5%',
+                                    fontWeight:'500'
+                                }}
+                                color={nowTheme.COLORS.HEADER}
+                            >
                                 Member #2:
               </Text>
                             <Block style={{ flexDirection: 'column' }}>
@@ -776,7 +564,7 @@ class FYP1_FinalEvaluation_View extends React.Component {
                                     }}
                                     color={nowTheme.COLORS.HEADER}
                                 >
-                                    Email: {this.state.member2email}
+                                    ID: {this.state.member2ID}
                                 </Text>
 
                                 <Text
@@ -794,109 +582,12 @@ class FYP1_FinalEvaluation_View extends React.Component {
                                 </Text>
                             </Block>
 
-                            <Text
-                                p
-                                style={{
-                                    fontFamily: 'montserrat-regular',
-                                    marginBottom: theme.SIZES.BASE / 2,
-                                    marginTop: '2.5%',
-                                    fontWeight:'500'
-                                }}
-                                color={nowTheme.COLORS.HEADER}
-                            >
-                                Member #3:
-              </Text>
-                            <Block style={{ flexDirection: 'column' }}>
-
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Email: {this.state.member3email}
-                                </Text>
-
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16,
-
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Marks: {this.state.member3marks}
-                                </Text>
-                            </Block>
-
                         </Block>
                     </Block>
                 </Block>
             </Block>
         );
     };
-
-    renderJury = () => {
-
-        return (
-            <Block flex style={styles.group}>
-                <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-                    <Text
-                        h5
-                        style={{
-                            fontFamily: 'montserrat-regular',
-                            marginBottom: theme.SIZES.BASE / 2,
-                            fontWeight: '500',
-
-                        }}
-                        color={nowTheme.COLORS.HEADER}
-                    >
-                        Evaluators
-                </Text>
-                    <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-                        <Block style={{ flexDirection: 'column' }}>
-                            <Text
-                                p
-                                style={{
-                                    fontFamily: 'montserrat-regular',
-                                    marginBottom: theme.SIZES.BASE / 2,
-                                    marginTop: '2.5%',
-                                    fontSize: 16
-
-                                }}
-                                color={nowTheme.COLORS.HEADER}
-                            >
-                                Evaluator # 1 : {this.state.evaluator}
-                            </Text>
-
-                            <Text
-                                p
-                                style={{
-                                    fontFamily: 'montserrat-regular',
-                                    marginBottom: theme.SIZES.BASE / 2,
-                                    marginTop: '2.5%',
-                                    fontSize: 16
-
-                                }}
-                                color={nowTheme.COLORS.HEADER}
-                            >
-                                Evaluator # 2 : {this.state.coevaluator}
-                            </Text>
-
-                        </Block>
-                    </Block>
-                </Block>
-            </Block>
-        );
-    };
-
 
     render() {
         return (
@@ -916,9 +607,6 @@ class FYP1_FinalEvaluation_View extends React.Component {
 
                     {this.renderFYP2expected()}
                     {this.renderMarks()}
-                    {this.renderJury()}
-
-
                 </ScrollView>
             </Block>
         );

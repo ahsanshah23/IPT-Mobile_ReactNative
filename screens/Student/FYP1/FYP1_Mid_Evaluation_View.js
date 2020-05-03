@@ -16,12 +16,9 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
         //Initial State
         this.state = {
             title: "",
-            leadername: "",
-            leaderemail: "",
-            member2name: "",
-            member2email: "",
-            member3name: "",
-            member3email: "",
+            leaderID: "",
+            member1ID: "",
+            member2ID: "",
             supervisor: "",
             cosupervisor: "",
             status: "",
@@ -30,16 +27,12 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
             markcriteria3: "",
             markcriteria4: "",
             markcriteria5: "",
-            markcriteria6: "",
             deliverable1: "",
             deliverable2: "",
             deliverable3: "",
             deliverable4: "",
             deliverable5: "",
             changes: "",
-            comments: "",
-            evaluator: "",
-            coevaluator: "",
             markstotal: ""
         };
     }
@@ -50,40 +43,32 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
     }
 
     async getdata() {
+        let ID1 = await AsyncStorage.getItem('ID');
+        alert(ID1);
         let ip = await AsyncStorage.getItem('ip');
         let session_email = await AsyncStorage.getItem('email');
-        fetch('http://' + ip + ':3006/fyp1midevaluation_view?Email=' + session_email + '')
+        await fetch('http://192.168.1.4:45455/api/fyp1get/GetProposalEvaluations?id='+ID1+'')
             .then(res => res.json())
             .then(users => {
-
                 this.setState({
-                    title: users[0].Project_Title,
-                    leaderemail: users[0].leader_email,
-                    leadername: users[0].leader_name,
-                    member2email: users[0].member2_email,
-                    member2name: users[0].member2_name,
-                    member3email: users[0].member3_email,
-                    member3name: users[0].member3_name,
-                    supervisor: users[0].supervisor_email,
-                    cosupervisor: users[0].cosupervisor_email,
-                    status: users[0].Project_Status,
-                    markcriteria1: users[0].Criteria1_Marks,
-                    markcriteria2: users[0].Criteria2_Marks,
-                    markcriteria3: users[0].Criteria3_Marks,
-                    markcriteria4: users[0].Criteria4_Marks,
-                    markcriteria5: users[0].Criteria5_Marks,
-                    markcriteria6: users[0].Criteria6_Marks,
-                    deliverable1: users[0].Deliverable1,
-                    deliverable2: users[0].Deliverable2,
-                    deliverable3: users[0].Deliverable3,
-                    deliverable4: users[0].Deliverable4,
-                    deliverable5: users[0].Deliverable5,
-                    changes: users[0].Recommended_Changes,
-                    comments: users[0].Comments_To_FYP_Committee,
-                    evaluator: users[0].Evaluator1_name,
-                    coevaluator: users[0].Evaluator2_name,
-
-
+                    title: users[0].ProjectName,
+                    leaderID: users[0].LeaderID,
+                    member1ID: users[0].Member1ID,
+                    member2ID: users[0].Member2ID,
+                    supervisor: users[0].SuperVisorEmpID,
+                    cosupervisor: users[0].CoSuperVisorID,
+                    status: users[0].DefenceStatus,
+                    markcriteria1: users[0].Criteria1Marks,
+                    markcriteria2: users[0].Criteria2Marks,
+                    markcriteria3: users[0].Criteria3Marks,
+                    markcriteria4: users[0].Criteria4Marks,
+                    markcriteria5: users[0].Criteria5Marks,
+                    deliverable1: users[0].Deliverables1,
+                    deliverable2: users[0].Deliverables2,
+                    deliverable3: users[0].Deliverables3,
+                    deliverable4: users[0].Deliverables4,
+                    deliverable5: users[0].Deliverables5,
+                    changes: users[0].ChangesRecommeneded,
                 })
 
             })
@@ -136,8 +121,6 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
     }
 
     renderTitle = () => {
-
-
         return (
             <Block flex style={styles.group}>
                 <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
@@ -292,7 +275,7 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
     };
 
     renderTeam = () => {
-        const { leaderemail, leadername, member2email, member2name, member3email, member3name } = this.state;
+        const { leaderID, member1ID, member2ID } = this.state;
         return (
             <Block flex style={styles.group}>
                 <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
@@ -319,27 +302,8 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                                 }}
                                 color={nowTheme.COLORS.HEADER}
                             >
-                                Member 1 : (Leader)
+                                Leader ID : {leaderID}
                             </Text>
-                            <Block style={{ flexDirection: 'column' }}>
-
-                             
-
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16,
-
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Email: {leaderemail}
-                                </Text>
-
-                            </Block>
                             <Text
                                 p
                                 style={{
@@ -350,26 +314,8 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                                 }}
                                 color={nowTheme.COLORS.HEADER}
                             >
-                                Member 2 :
+                                Member 2 : {member1ID}
                             </Text>
-                            <Block style={{ flexDirection: 'column' }}>
-                               
-
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16,
-
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Email: {member2email}
-                                </Text>
-
-                            </Block>
                             <Text
                                 p
                                 style={{
@@ -380,25 +326,8 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                                 }}
                                 color={nowTheme.COLORS.HEADER}
                             >
-                                Member 3 :
+                                Member 3 : {member2ID}
                             </Text>
-                            <Block style={{ flexDirection: 'column' }}>
-                                
-
-                                <Text
-                                    p
-                                    style={{
-                                        fontFamily: 'montserrat-regular',
-                                        marginBottom: theme.SIZES.BASE / 2,
-                                        marginTop: '2.5%',
-                                        fontSize: 16,
-
-                                    }}
-                                    color={nowTheme.COLORS.HEADER}
-                                >
-                                    Email: {member3email}
-                                </Text>
-                            </Block>
                         </Block>
                     </Block>
                 </Block>
@@ -574,7 +503,7 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                         color={nowTheme.COLORS.HEADER}
                     >
                         Recommended Changes:
-          </Text>
+                    </Text>
 
                     <Text
                         h5
@@ -593,96 +522,6 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
         );
     };
 
-    renderComments = () => {
-        return (
-            <Block flex style={styles.group}>
-                <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-                    <Text
-                        h5
-                        style={{
-                            fontFamily: 'montserrat-regular',
-                            marginBottom: theme.SIZES.BASE / 2,
-                            fontWeight: '500'
-                        }}
-                        color={nowTheme.COLORS.HEADER}
-                    >
-                        Comments to the FYP Committee:
-          </Text>
-
-                    <Text
-                        h5
-                        style={{
-                            fontFamily: 'montserrat-regular',
-                            marginBottom: theme.SIZES.BASE / 2,
-                            fontSize: 16
-                        }}
-                        color={nowTheme.COLORS.HEADER}
-                    >
-                        {this.state.comments}
-                    </Text>
-
-
-                </Block>
-            </Block>
-        );
-    };
-
-    renderJury = () => {
-
-        return (
-            <Block flex style={styles.group}>
-                <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-                    <Text
-                        h5
-                        style={{
-                            fontFamily: 'montserrat-regular',
-                            marginBottom: theme.SIZES.BASE / 2,
-                            fontWeight: '500',
-
-                        }}
-                        color={nowTheme.COLORS.HEADER}
-                    >
-                        Evaluators
-                </Text>
-                    <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-                        <Block style={{ flexDirection: 'column' }}>
-                            <Text
-                                p
-                                style={{
-                                    fontFamily: 'montserrat-regular',
-                                    marginBottom: theme.SIZES.BASE / 2,
-                                    marginTop: '2.5%',
-                                    fontSize: 16
-
-                                }}
-                                color={nowTheme.COLORS.HEADER}
-                            >
-                                Evaluator # 1 : {this.state.evaluator}
-                            </Text>
-
-                            <Text
-                                p
-                                style={{
-                                    fontFamily: 'montserrat-regular',
-                                    marginBottom: theme.SIZES.BASE / 2,
-                                    marginTop: '2.5%',
-                                    fontSize: 16
-
-                                }}
-                                color={nowTheme.COLORS.HEADER}
-                            >
-                                Evaluator 2 : {this.state.coevaluator}
-                            </Text>
-
-                        </Block>
-                    </Block>
-                </Block>
-            </Block>
-        );
-    };
-
-
-
     render() {
         return (
             <Block flex center>
@@ -695,11 +534,6 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
                     {this.renderAssesment()}
                     {this.renderDeliverables()}
                     {this.renderChanges()}
-                    {this.renderComments()}
-                    {this.renderJury()}
-
-
-
                 </ScrollView>
             </Block>
         );

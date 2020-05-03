@@ -15,9 +15,9 @@ class FYP1_FinalEvaluation extends React.Component {
     //Initial State
     this.state = {
       title: "",
-      leadername: "",     
-      member2name: "",     
-      member3name: "",
+      leaderID: "",     
+      member1ID: "",     
+      member2ID: "",
       supervisor: "",
       cosupervisor: "",
       deliverable1detail: "",
@@ -31,16 +31,11 @@ class FYP1_FinalEvaluation extends React.Component {
       deliverable5detail: "",
       deliverable5completed: "",
       fyp2deliverables: "",
-      leaderemail: "",
       leadermarks:"",
-      member2email: "",
+      member1marks:"",
       member2marks:"",
-      member3email: "",
-      member3marks:"",
-      evaluator:"",
-      coevaluator:"",
+      fypID: "",
       fyps:[]
-
     };
   }
 
@@ -49,19 +44,19 @@ class FYP1_FinalEvaluation extends React.Component {
   }
 
   async getData() {
-
+    let ID1 = await AsyncStorage.getItem('ID1');
+    alert(ID1);
     const markers = [];
     let ip = await AsyncStorage.getItem('ip');
 
-    await fetch('http://' + ip + ':3006/fypnames ')
+    await fetch('http://192.168.1.4:45455/api/fyp1get/GetFypNames?id='+ID1+'')
       .then(res => res.json())
 
       .then(res => {
         res.map((element) => {
           const marketObj = {};
-          marketObj.id = element.id;
-          marketObj.title = element.title;
-          marketObj.leaderemail = element.leaderemail;
+          marketObj.id = element.FypID;
+          marketObj.title = element.ProjectName;
 
           markers.push(marketObj);
         });
@@ -71,23 +66,47 @@ class FYP1_FinalEvaluation extends React.Component {
   }
 
   async Submit() {
-    console.warn(this.state.evaluator);
-    const { title, leadername, leaderemail, member2name, member2email, member3email, member3name, supervisor, cosupervisor, deliverable1detail, deliverable1completed, deliverable2detail, deliverable2completed, deliverable3detail, deliverable3completed, deliverable4detail, deliverable4completed, deliverable5detail, deliverable5completed, fyp2deliverables, leadermarks, member2marks, member3marks, evaluator, coevaluator } = this.state;
+    const { title, fypID, leaderID, member1ID, member2ID, deliverable1completed, deliverable2completed, deliverable3completed, deliverable4completed, deliverable5completed, fyp2deliverables, leadermarks, member1marks, member2marks} = this.state;
     let ip = await AsyncStorage.getItem('ip');
     let session_email = await AsyncStorage.getItem('email');
-    await fetch('http://' + ip + ':3006/fyp1finalevaluation_add?title=' + title + ' &leadername=' + leadername + ' &member2name=' + member2name + ' &member3name=' + member3name +
-    ' &supervisor=' + supervisor + ' &cosupervisor=' + cosupervisor + ' &deliverable1detail=' + deliverable1detail + ' &deliverable1completed=' + deliverable1completed +
-    ' &deliverable2detail=' + deliverable2detail +'&deliverable2completed=' + deliverable2completed + '&deliverable3detail=' + deliverable3detail + ' &deliverable3completed=' +
-     deliverable3completed + ' &deliverable4detail=' + deliverable4detail + ' &deliverable4completed=' + deliverable4completed + ' &deliverable5detail=' + deliverable5detail+ 
-     '&deliverable5completed=' + deliverable5completed + ' &fyp2deliverables=' + fyp2deliverables + ' &leaderemail=' + leaderemail + ' &leadermarks=' + leadermarks +
-     ' &member2email=' + member2email+ '&member2marks=' + member2marks + ' &member3email=' + member3email + ' &member3marks=' + member3marks + ' &evaluator=' + evaluator + 
-     ' &coevaluator=' + coevaluator +' &submitted_by=' + session_email +' ')
-      .then(users => {
 
-        alert("inserted");
+    fetch('http://192.168.1.4:45455/api/fyp1post/AddFinalEvaluationJury', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "FypID" : fypID,
+        "FormID" : 2,
+        "Deliverable1Completion" : deliverable1completed,
+        "Deliverable2Completion" : deliverable2completed,
+        "Deliverable3Completion" : deliverable3completed,
+        "Deliverable4Completion" : deliverable4completed,
+        "Deliverable5Completion" : deliverable5completed,
+        "Fyp2Deliverables" : fyp2deliverables,
+        "LeaderID" : leaderID,
+        "Member1ID": member1ID,
+        "Member2ID": member2ID,
+        "leaderMarks": leadermarks,
+        "member1marks":member1marks,
+        "member2marks":member2marks
+
+
+          })
+        })
+      .then((response) => response.json())
+        alert("Inserted");
         this.props.navigation.navigate('Teacher_Home')
+
+      .then((responseJson) => {
+        console.log(responseJson);
       })
-  
+
+      .catch((error) => {
+        alert("Error");
+        console.error(error);
+      });
 
   }
 
@@ -95,18 +114,31 @@ class FYP1_FinalEvaluation extends React.Component {
     
     let ip = await AsyncStorage.getItem('ip');
 
-    await fetch('http://' + ip + ':3006/formfill_by_title?title='+title+' ')
+    await fetch('http://192.168.1.4:45455//api/fyp1get/GetFypDetailsByTitle?title='+title+'')
     .then(res => res.json())
     .then(users => {
 
         this.setState({
-            title: users[0].title, 
-            leaderemail: users[0].leaderemail,
-            member2email: users[0].member2email,
-            member3email: users[0].member3email,
-            supervisor: users[0].supervisor,
-            cosupervisor: users[0].cosupervisor,
+          title: title,
+          fypID: users[0].FypID,
+          leaderID: users[0].LeaderID,
+          member1ID: users[0].Member1ID,
+          member2ID: users[0].Member2ID,
+          supervisor: users[0].SupervisorEmpID,
+          cosupervisor: users[0].CoSuperVisorID,
+        })
+    })
 
+    await fetch('http://192.168.1.4:45455//api/fyp1get/GetFypDeliverablesDetailsByTitle?title='+title+'')
+    .then(res => res.json())
+    .then(users => {
+
+        this.setState({
+          deliverable1detail: users[0].Deliverables1,
+          deliverable2detail: users[0].Deliverables2,
+          deliverable3detail: users[0].Deliverables3,
+          deliverable4detail: users[0].Deliverables4,
+          deliverable5detail: users[0].Deliverables5,
         })
 
     })
@@ -180,13 +212,8 @@ class FYP1_FinalEvaluation extends React.Component {
                 <Picker.Item key={key} label={item.title} value={item.title} />
               )
               )}
-
-
             </Picker>
           </Block>
-
-
-
         </Block>
       </Block>
     );
@@ -252,19 +279,9 @@ class FYP1_FinalEvaluation extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Member 1 : (Leader)
+                Leader : {this.state.leaderID}
               </Text>
-              <Block style={{ flexDirection: 'column' }}>
-
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(leadername) => this.setState({ leadername })}
-                  placeholder="Name"
-                >
-                </FloatingLabel>
-
-              </Block>
+              
               <Text
                 p
                 style={{
@@ -274,18 +291,9 @@ class FYP1_FinalEvaluation extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Member 2 :
+                Member 1 : {this.state.member1ID}
               </Text>
-              <Block style={{ flexDirection: 'column' }}>
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(member2name) => this.setState({ member2name })}
-                  placeholder="Name"
-                >
-                </FloatingLabel>
-
-              </Block>
+            
               <Text
                 p
                 style={{
@@ -295,18 +303,8 @@ class FYP1_FinalEvaluation extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Member 3 :
+                Member 2 : {this.state.member2ID}
               </Text>
-              <Block style={{ flexDirection: 'column' }}>
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(member3name) => this.setState({ member3name })}
-                  placeholder="Name"
-                >
-                </FloatingLabel>
-
-              </Block>
             </Block>
           </Block>
         </Block>
@@ -339,16 +337,8 @@ class FYP1_FinalEvaluation extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Supervisor NU Email :
+                Supervisor ID : {this.state.supervisor}
               </Text>
-              <Block style={{ flexDirection: 'column' }}>
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  value={this.state.supervisor}
-                >
-                </FloatingLabel>
-              </Block>
               <Text
                 p
                 style={{
@@ -358,16 +348,8 @@ class FYP1_FinalEvaluation extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Co-supervisor(s) (if any) NU Email :
+                Co-supervisor(s) ID (if any) : {this.state.cosupervisor}
               </Text>
-              <Block style={{ flexDirection: 'column' }}>
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  value={this.state.cosupervisor}
-                >
-                </FloatingLabel>
-              </Block>
             </Block>
           </Block>
         </Block>
@@ -497,18 +479,9 @@ class FYP1_FinalEvaluation extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Deliverable #1:
+                Deliverable #1: {this.state.deliverable1detail}
               </Text>
               <Block style={{ flexDirection: 'column' }}>
-
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(deliverable1detail) => this.setState({ deliverable1detail })}
-                  placeholder="Detail"
-                >
-                </FloatingLabel>
-
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
@@ -517,6 +490,7 @@ class FYP1_FinalEvaluation extends React.Component {
                 >
                 </FloatingLabel>
               </Block>
+
               <Text
                 p
                 style={{
@@ -526,18 +500,9 @@ class FYP1_FinalEvaluation extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Deliverable  #2:
+                Deliverable  #2: {this.state.deliverable2detail}
               </Text>
               <Block style={{ flexDirection: 'column' }}>
-
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(deliverable2detail) => this.setState({ deliverable2detail })}
-                  placeholder="Detail"
-                >
-                </FloatingLabel>
-
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
@@ -546,6 +511,7 @@ class FYP1_FinalEvaluation extends React.Component {
                 >
                 </FloatingLabel>
               </Block>
+
               <Text
                 p
                 style={{
@@ -555,18 +521,9 @@ class FYP1_FinalEvaluation extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Deliverable  #3:
+                Deliverable  #3: {this.state.deliverable3detail}
               </Text>
               <Block style={{ flexDirection: 'column' }}>
-
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(deliverable3detail) => this.setState({ deliverable3detail })}
-                  placeholder="Detail"
-                >
-                </FloatingLabel>
-
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
@@ -585,18 +542,9 @@ class FYP1_FinalEvaluation extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Deliverable  #4:
+                Deliverable  #4: {this.state.deliverable4detail}
               </Text>
               <Block style={{ flexDirection: 'column' }}>
-
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(deliverable4detail) => this.setState({ deliverable4detail })}
-                  placeholder="Detail"
-                >
-                </FloatingLabel>
-
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
@@ -615,18 +563,9 @@ class FYP1_FinalEvaluation extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Deliverable  #5:
+                Deliverable  #5: {this.state.deliverable5detail}
               </Text>
               <Block style={{ flexDirection: 'column' }}>
-
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(deliverable5detail) => this.setState({ deliverable5detail })}
-                  placeholder="Detail"
-                >
-                </FloatingLabel>
-
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
@@ -635,8 +574,6 @@ class FYP1_FinalEvaluation extends React.Component {
                 >
                 </FloatingLabel>
               </Block>
-
-
             </Block>
           </Block>
         </Block>
@@ -670,17 +607,9 @@ class FYP1_FinalEvaluation extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Member 1 : (Leader)
+                Leader : {this.state.leaderID}
               </Text>
               <Block style={{ flexDirection: 'column' }}>
-
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  value={this.state.leaderemail}
-                >
-                </FloatingLabel>
-
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
@@ -700,17 +629,30 @@ class FYP1_FinalEvaluation extends React.Component {
                 }}
                 color={nowTheme.COLORS.HEADER}
               >
-                Member #2:
+                Member #1: {this.state.member1ID}
               </Text>
               <Block style={{ flexDirection: 'column' }}>
-
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
-                  value={this.state.member2email}
+                  onChangeText={(member1marks) => this.setState({ member1marks })}
+                  placeholder="Marks"
                 >
                 </FloatingLabel>
+              </Block>
 
+              <Text
+                p
+                style={{
+                  fontFamily: 'montserrat-regular',
+                  marginBottom: theme.SIZES.BASE / 2,
+                  marginTop: '2.5%'
+                }}
+                color={nowTheme.COLORS.HEADER}
+              >
+                Member #2: {this.state.member2ID}
+              </Text>
+              <Block style={{ flexDirection: 'column' }}>
                 <FloatingLabel
                   inputStyle={styles.input1}
                   style={styles.formInput}
@@ -720,108 +662,12 @@ class FYP1_FinalEvaluation extends React.Component {
                 </FloatingLabel>
               </Block>
 
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Member #3:
-              </Text>
-              <Block style={{ flexDirection: 'column' }}>
-
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  value={this.state.member3email}
-                >
-                </FloatingLabel>
-
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(member3marks) => this.setState({ member3marks })}
-                  placeholder="Marks"
-                >
-                </FloatingLabel>
-              </Block>
-
             </Block>
           </Block>
         </Block>
       </Block>
     );
   };
-
-  renderJury = () => {
-    return (
-      <Block flex style={styles.group}>
-        <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-          <Text
-            h5
-            style={{
-              fontFamily: 'montserrat-regular',
-              marginBottom: theme.SIZES.BASE / 2
-            }}
-            color={nowTheme.COLORS.HEADER}
-          >
-            Evaluators:
-          </Text>
-          <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-            <Block style={{ flexDirection: 'column' }}>
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Evaluator's Name:
-              </Text>
-              <Block style={{ flexDirection: 'column' }}>
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(evaluator) => this.setState({ evaluator })}
-                  placeholder="Descriptionn"
-                >
-                </FloatingLabel>
-              </Block>
-
-              <Text
-                p
-                style={{
-                  fontFamily: 'montserrat-regular',
-                  marginBottom: theme.SIZES.BASE / 2,
-                  marginTop: '2.5%'
-                }}
-                color={nowTheme.COLORS.HEADER}
-              >
-                Co-Evaluator's Name
-              </Text>
-              <Block style={{ flexDirection: 'column' }}>
-                <FloatingLabel
-                  inputStyle={styles.input1}
-                  style={styles.formInput}
-                  onChangeText={(coevaluator) => this.setState({ coevaluator })}
-                  placeholder="Description"
-                >
-                </FloatingLabel>
-              </Block>
-
-          
-            </Block>
-          </Block>
-        </Block>
-      </Block>
-    );
-  };
-
 
   render() {
     return (
@@ -833,7 +679,7 @@ class FYP1_FinalEvaluation extends React.Component {
           {this.renderHeading()}
           {this.renderTitle()}
 
-          {/* {this.renderTeam()} */}
+          {this.renderTeam()}
           {this.renderSupervisors()}
 
           {this.renderrules()}
@@ -841,7 +687,6 @@ class FYP1_FinalEvaluation extends React.Component {
 
           {this.renderFYP2expected()}
           {this.renderMarks()}
-          {this.renderJury()}
 
           <Block style={{ flex: 0.33, flexDirection: 'row', marginTop: theme.SIZES.BASE, justifyContent: 'center', alignItems: 'center' }}>
             <Button
