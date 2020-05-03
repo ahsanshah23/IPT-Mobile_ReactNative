@@ -17,7 +17,7 @@ class FYP1_Proposal_View_Student extends React.Component {
         this.state = {
             title: "",
             type: "",
-
+            
             abstract: "",
             leaderID: "",
             member1ID: "",
@@ -31,12 +31,15 @@ class FYP1_Proposal_View_Student extends React.Component {
     }
 
     componentDidMount() {
-        this.getdata();
+        this.getdata();             
 
     }
 
     async getdata() {
-        fetch('http://192.168.0.109:45455/api/fyp1get/getproposaldetails')
+
+        let ip = await AsyncStorage.getItem('ip');
+        fetch('http://'+ip+'/api/fyp1get/getproposaldetails')
+
             .then(res => res.json())
             .then(users => {
 

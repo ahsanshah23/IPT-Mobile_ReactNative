@@ -20,6 +20,7 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
     super(props);
     //Initial State
     this.state = {
+
       fypID:"",
       title: "",
       leaderID: "",
@@ -35,16 +36,17 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
       markcriteria4: 0,
       markcriteria5: 0,
 
-      
+
+
       deliverable1: "",
       deliverable2: "",
       deliverable3: "",
       deliverable4: "",
       deliverable5: "",
-      
+
       changes: "",
       comments: "",
-     
+
       fyps: [],
     };
   }
@@ -59,7 +61,9 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
     const markers = [];
     let ip = await AsyncStorage.getItem('ip');
 
-    await fetch('http://192.168.1.4:45455/api/fyp1get/GetFypNames?id='+ID1+'')
+
+    await fetch('http://' + ip + '/api/fyp1get/GetFypNames?id='+ID1+'')
+
       .then(res => res.json())
 
       .then(res => {
@@ -81,13 +85,16 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
     let ip = await AsyncStorage.getItem('ip');
     let session_email = await AsyncStorage.getItem('email');
 
-    fetch('http://192.168.1.4:45455/api/fyp1post/AddProposalEvaluationJury', {
+
+    fetch('http://' + ip + '/api/fyp1post/AddProposalEvaluationJury', {
+
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+
         "FypID" : fypID,
         "FormID" : 1,
         "Criteria1Marks" : markcriteria1,
@@ -113,6 +120,7 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
 
       .then((responseJson) => {
         console.log(responseJson);
+
       })
 
       .catch((error) => {
@@ -120,7 +128,6 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
         console.error(error);
       });
 
-    
   }
 
   renderHeading = () => {
@@ -168,26 +175,28 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
   }
 
   async setData(title) {
-    
+
     let ip = await AsyncStorage.getItem('ip');
 
-    await fetch('http://192.168.1.4:45455//api/fyp1get/GetFypDetailsByTitle?title='+title+'')
-    .then(res => res.json())
-    .then(users => {
-      alert(users[0].LeaderID);
+
+    await fetch('http://'+ip+'/api/fyp1get/GetFypDetailsByTitle?title='+title+'')
+      .then(res => res.json())
+      .then(users => {
+        alert(users[0].LeaderID);
+
 
         this.setState({
-            title: title,
-            fypID: users[0].FypID,
-            leaderID: users[0].LeaderID,
-            member1ID: users[0].Member1ID,
-            member2ID: users[0].Member2ID,
-            supervisor: users[0].SupervisorEmpID,
-            cosupervisor: users[0].CoSuperVisorID,
+          title: title,
+          fypID: users[0].FypID,
+          leaderID: users[0].LeaderID,
+          member1ID: users[0].Member1ID,
+          member2ID: users[0].Member2ID,
+          supervisor: users[0].SupervisorEmpID,
+          cosupervisor: users[0].CoSuperVisorID,
 
         })
 
-    })
+      })
   }
 
   renderTitle = () => {
@@ -213,9 +222,9 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
               selectedValue={this.state.title}
               style={{ height: 50, width: 100 }}
               onValueChange={(value) =>
-                 this.setData(value)
+                this.setData(value)
               }
-              >
+            >
               {this.state.fyps.map((item, key) => (
                 <Picker.Item key={key} label={item.title} value={item.title} />
               )
@@ -492,7 +501,7 @@ class FYP1_Mid_Evaluation_Add extends React.Component {
               >
                 Supervisor ID : {this.state.supervisor}
               </Text>
-              
+
               <Text
                 p
                 style={{
@@ -738,7 +747,7 @@ const styles = StyleSheet.create({
   formInput: {
     borderBottomWidth: 1.5,
     fontSize: 16,
-    color:'black'
+    color: 'black'
   },
   input1: {
     borderWidth: 0,
